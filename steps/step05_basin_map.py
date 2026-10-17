@@ -64,7 +64,7 @@ def main():
     # interactive 3D (plotly): the wall, the homes, and (hidden by default) every simulated reef
     fig = go.Figure()
     fig.add_trace(go.Surface(
-        x=coral_axis, y=herb_axis, z=wall, colorscale="RdYlBu_r", opacity=0.9,
+        x=coral_axis, y=herb_axis, z=wall, colorscale="RdYlBu", opacity=0.9,
         colorbar=dict(title="max seaweed<br>for recovery"), name="tolerance wall"))
     names = {0: "ends in CORAL home", 1: "ends in SEAWEED home", UNRESOLVED: "unclear"}
     for k, name in names.items():
@@ -93,10 +93,7 @@ def main():
     fig3 = plt.figure(figsize=(8, 6.5))
     ax = fig3.add_subplot(projection="3d")
     CC, HH = np.meshgrid(coral_axis, herb_axis)
-    ax.plot_surface(CC, HH, wall, cmap="RdYlBu_r", edgecolor="grey", linewidth=0.3, alpha=0.9)
-    for x, face in [(homes[0], "black"), (homes[1], "black"), (hilltop, "white")]:
-        ax.scatter(x[0], x[2], x[1], s=120, color=face, edgecolor="black", linewidth=2,
-                   depthshade=False)
+    ax.plot_surface(CC, HH, wall, cmap="RdYlBu", edgecolor="grey", linewidth=0.3, alpha=0.9)
     ax.set_xlabel("Coral cover (C)")
     ax.set_ylabel("Herbivores (H)")
     ax.set_zlabel("Max seaweed for recovery")
