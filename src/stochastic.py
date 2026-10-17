@@ -24,14 +24,18 @@ def keep_feasible(X):
 
 def simulate_noisy(x0, p, years, sigma, n_replicates, rng, dt=0.05, record_every=1.0):
     """Run n_replicates noisy copies of the same reef. Returns (t, path),
-    path has shape (n_records, 3, n_replicates)."""
+    path has shape (n_records, 3, n_replicates).
+
+    p is a parameter dict, or a function p(t) returning one (for conditions
+    that change over time, e.g. slowly declining grazing)."""
     X = np.repeat(np.asarray(x0, dtype=float)[:, None], n_replicates, axis=1)
     n_steps = int(round(years / dt))
     every = int(round(record_every / dt))
     t, path = [0.0], [X.copy()]
     for i in range(1, n_steps + 1):
         kick = sigma * np.sqrt(dt) * rng.normal(size=X.shape)
-        X = keep_feasible(X + rhs(0, X, p) * dt + kick)
+        p_now = p((i - 1) * dt) if callable(p) else p
+        X = keep_feasible(X + rhs(0, X, p_now) * dt + kick)
         if i % every == 0:
             t.append(i * dt)
             path.append(X.copy())
