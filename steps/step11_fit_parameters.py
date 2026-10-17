@@ -46,13 +46,13 @@ def main():
     print(f"  (a perfect model would score about {n_values} - one unit per recorded value)\n")
 
     print(f"{'parameter':8s} {'TRUE':>7s}" + "".join(f"{'fit ' + str(k + 1):>9s}" for k in range(N_STARTS))
-          + "    verdict")
+          + f"{'off by':>9s}{'fits agree?':>13s}")
     for i, name in enumerate(FITTED):
-        vals = [f["theta"][i] for f in fits]
-        ratios = np.array(vals) / truth[i]
-        verdict = ("close in all fits" if np.all(np.abs(np.log(ratios)) < np.log(1.25))
-                   else "fits disagree / far off")
-        print(f"{name:8s} {truth[i]:7.3f}" + "".join(f"{v:9.3f}" for v in vals) + f"    {verdict}")
+        vals = np.array([f["theta"][i] for f in fits])
+        off = best_off = vals[np.argmin([f["misfit"] for f in fits])] / truth[i] - 1
+        agree = "yes" if vals.max() / vals.min() < 1.02 else "NO"
+        print(f"{name:8s} {truth[i]:7.3f}" + "".join(f"{v:9.3f}" for v in vals)
+              + f"{off:+9.0%}{agree:>13s}")
 
     Path("data/fits").mkdir(parents=True, exist_ok=True)
     Path("data/fits/step11_fits.json").write_text(json.dumps({
