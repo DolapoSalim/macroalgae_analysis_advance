@@ -1,0 +1,96 @@
+{
+  "description": "Synthetic reef monitoring data. Same biology at every site.",
+  "true_parameters": {
+    "r_C": 0.2,
+    "r_rec": 0.05,
+    "mu_C": 0.05,
+    "a_CM": 0.35,
+    "r_M": 0.45,
+    "beta_N": 0.2,
+    "mu_M": 0.12,
+    "G_max": 0.4,
+    "K_G": 0.3,
+    "r_H": 0.15,
+    "K_H": 1.0,
+    "q_M": 0.1,
+    "mu_H": 0.08,
+    "F_H": 0.0,
+    "N": 0.5
+  },
+  "sites": {
+    "A Protected, clean water": {
+      "start_CMH": [
+        0.6,
+        0.1,
+        0.7
+      ],
+      "F_H": 0.0,
+      "N": 0.5,
+      "funding_gap_years": null
+    },
+    "B Protected, polluted": {
+      "start_CMH": [
+        0.45,
+        0.25,
+        0.6
+      ],
+      "F_H": 0.0,
+      "N": 1.5,
+      "funding_gap_years": null
+    },
+    "C Lightly fished": {
+      "start_CMH": [
+        0.6,
+        0.1,
+        0.4
+      ],
+      "F_H": 0.03,
+      "N": 0.5,
+      "funding_gap_years": null
+    },
+    "D Fished and polluted": {
+      "start_CMH": [
+        0.6,
+        0.1,
+        0.3
+      ],
+      "F_H": 0.04,
+      "N": 1.5,
+      "funding_gap_years": [
+        13,
+        14.5
+      ]
+    },
+    "E Heavily fished": {
+      "start_CMH": [
+        0.5,
+        0.1,
+        0.3
+      ],
+      "F_H": 0.06,
+      "N": 0.5,
+      "funding_gap_years": [
+        13,
+        14.5
+      ]
+    },
+    "F Seaweed reef, protected": {
+      "start_CMH": [
+        0.1,
+        0.6,
+        0.3
+      ],
+      "F_H": 0.0,
+      "N": 1.0,
+      "funding_gap_years": null
+    }
+  },
+  "storm": {
+    "year": 8,
+    "type": "Strong storm (see src/disturbances.py)"
+  },
+  "everyday_noise_sigma": 0.01,
+  "surveys": "every 0.25 yr +/- 0.04 yr; 15% missed at random; herbivores every 2nd survey",
+  "measurement_error": "cover ~ beta(precision 150); herbivores ~ lognormal(sd 0.2)",
+  "seed": 10
+}

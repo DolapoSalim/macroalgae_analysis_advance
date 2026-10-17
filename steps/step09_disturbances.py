@@ -70,9 +70,9 @@ def main():
             runs[(event, reef)] = (t, path)
             end = which_home_many(settle(path[-1][:, None], p_static), homes)[0]
             rt = recovery_time(t, path, homes[0])
-            outcome = (f"recovers ({rt:.0f} yrs)" if rt is not None else "recovering...") \
+            outcome = (f"recovers in {rt:.0f} yrs" if rt is not None else "still recovering") \
                 if end == 0 else "TIPS to seaweed"
-            row += f"{outcome + f', max seaweed {path[:, 1].max():.0%}':>32s}"
+            row += f"   {outcome:>17s}, max seaweed {path[:, 1].max():4.0%}"
         print(row)
 
     # ---------------- Part B: with shaking, degraded reef
