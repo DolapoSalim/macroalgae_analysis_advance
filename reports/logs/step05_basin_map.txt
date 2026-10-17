@@ -1,0 +1,26 @@
+Simulating 1617 starting reefs for the 3D map...
+
+Share of starting reefs that end in the CORAL home, by starting herbivores:
+  herbivores 0.1:     9% coral home,   91% seaweed home,   0% unclear
+  herbivores 0.3:     9% coral home,   91% seaweed home,   0% unclear
+  herbivores 0.5:    16% coral home,   84% seaweed home,   0% unclear
+  herbivores 0.7:    29% coral home,   71% seaweed home,   0% unclear
+  herbivores 0.9:    44% coral home,   56% seaweed home,   0% unclear
+  herbivores 1.1:    59% coral home,   41% seaweed home,   0% unclear
+  herbivores 1.3:    72% coral home,   28% seaweed home,   0% unclear
+  ALL:                34% coral home,   66% seaweed home
+
+Finding the tolerance wall on a 20 x 15 grid...
+  herbivores 0.1: max seaweed for recovery at coral 20% / 50% / 80% = 0.00 / 0.00 / 0.00
+  herbivores 0.3: max seaweed for recovery at coral 20% / 50% / 80% = 0.01 / 0.01 / 0.02
+  herbivores 0.5: max seaweed for recovery at coral 20% / 50% / 80% = 0.05 / 0.07 / 0.09
+  herbivores 0.7: max seaweed for recovery at coral 20% / 50% / 80% = 0.11 / 0.16 / 0.20
+  herbivores 0.9: max seaweed for recovery at coral 20% / 50% / 80% = 0.21 / 0.29 / 0.20
+  herbivores 1.1: max seaweed for recovery at coral 20% / 50% / 80% = 0.32 / 0.44 / 0.20
+  herbivores 1.3: max seaweed for recovery at coral 20% / 50% / 80% = 0.46 / 0.50 / 0.20
+  herbivores 1.5: max seaweed for recovery at coral 20% / 50% / 80% = 0.64 / 0.50 / 0.20
+
+Simulating 1326 starting reefs for the flat slice (herbivores = 0.5)...
+  slice: 14% coral home, 86% seaweed home
+
+Figures saved in figures/ (open step05_basins_3d.html in a browser to rotate)

@@ -1,0 +1,26 @@
+
+================ Grazing G_max = 0.4  (baseline (one home in Step 3)) ================
+
+Resting point 1: coral 0.81, seaweed 0.00, herbivores 0.47
+  Maths test   -> eigenvalues (real part): -0.224, -0.354, -0.070  => STABLE (a home)
+  Nudge test   -> of 20 nudges: 20 went to the home with 81% coral
+
+  (+ 2 resting point(s) with ZERO herbivores -- all unstable: any fish arriving would multiply. Ignored from here on.)
+
+================ Grazing G_max = 0.19  (inside the two-homes zone) ================
+
+Resting point 1: coral 0.81, seaweed 0.00, herbivores 0.47
+  Maths test   -> eigenvalues (real part): -0.070, -0.224, -0.027  => STABLE (a home)
+  Nudge test   -> of 20 nudges: 20 went to the home with 81% coral
+
+Resting point 2: coral 0.62, seaweed 0.09, herbivores 0.53
+  Maths test   -> eigenvalues (real part): -0.225, +0.019, -0.060  => UNSTABLE (a balance point)
+  Nudge test   -> of 20 nudges: 11 went to the home with 81% coral, 9 went to the home with 31% coral
+
+Resting point 3: coral 0.31, seaweed 0.28, herbivores 0.65
+  Maths test   -> eigenvalues (real part): -0.233, -0.047, -0.047  => STABLE (a home)
+  Nudge test   -> of 20 nudges: 20 went to the home with 31% coral
+
+  (+ 2 resting point(s) with ZERO herbivores -- all unstable: any fish arriving would multiply. Ignored from here on.)
+
+Figure saved to figures\step04_resting_points.png

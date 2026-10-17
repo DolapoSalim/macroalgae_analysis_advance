@@ -1,0 +1,11 @@
+Share of 500 healthy reefs that end in the SEAWEED home after 50 years of shaking:
+
+noise   grazing 0.185   grazing 0.19   grazing 0.195
+ 0.01            48%          25%          10%
+ 0.02            74%          60%          43%
+ 0.03            85%          74%          57%
+ 0.04            84%          75%          62%
+ 0.06            86%          80%          70%
+ 0.08            86%          77%          74%
+
+Figures saved in figures/

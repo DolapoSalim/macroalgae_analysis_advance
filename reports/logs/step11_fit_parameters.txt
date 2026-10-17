@@ -1,0 +1,23 @@
+Fitting 13 biology numbers + 36 start values to 983 recorded values...
+
+  fit 1: misfit =  1292.2   (14 model runs)
+  fit 2: misfit =  1292.2   (11 model runs)
+  fit 3: misfit =  1292.2   (16 model runs)
+  (a perfect model would score about 983 - one unit per recorded value)
+
+parameter    TRUE    fit 1    fit 2    fit 3   off by  fits agree?
+r_C        0.200    0.158    0.158    0.158     -21%          yes
+r_rec      0.050    0.054    0.054    0.054      +7%          yes
+mu_C       0.050    0.041    0.041    0.041     -18%          yes
+a_CM       0.350    0.366    0.366    0.366      +5%          yes
+r_M        0.450    0.493    0.493    0.493     +10%          yes
+beta_N     0.200    0.285    0.285    0.285     +43%          yes
+mu_M       0.120    0.153    0.153    0.153     +27%          yes
+G_max      0.400    0.445    0.445    0.445     +11%          yes
+K_G        0.300    0.282    0.282    0.282      -6%          yes
+r_H        0.150    0.188    0.183    0.193     +28%           NO
+K_H        1.000    0.888    0.864    0.910      -9%           NO
+q_M        0.100    0.067    0.067    0.067     -33%          yes
+mu_H       0.080    0.086    0.081    0.090     +13%           NO
+
+Results saved in data/fits/, figures saved in figures/

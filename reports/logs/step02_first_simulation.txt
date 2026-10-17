@@ -1,0 +1,20 @@
+
+=== Healthy reef (nutrients N=0.5) ===
+  year   coral  seaweed  herbivores
+     0    0.60    0.15      0.70
+     5    0.66    0.01      0.62
+    10    0.75    0.00      0.57
+    25    0.81    0.00      0.50
+    50    0.81    0.00      0.47
+   100    0.81    0.00      0.47
+
+=== After storm (nutrients N=1.2) ===
+  year   coral  seaweed  herbivores
+     0    0.25    0.15      0.50
+     5    0.42    0.09      0.51
+    10    0.58    0.03      0.51
+    25    0.79    0.00      0.48
+    50    0.81    0.00      0.47
+   100    0.81    0.00      0.47
+
+Figure saved to figures\step02_trajectories.png

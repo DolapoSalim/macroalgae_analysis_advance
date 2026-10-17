@@ -1,0 +1,21 @@
+grazing   final coral        final coral
+G_max     (coral start)      (seaweed start)
+0.000      0.03               0.03
+0.050      0.06               0.06
+0.100      0.09               0.09
+0.150      0.16               0.16
+0.180      0.81               0.25  <-- TWO HOMES
+0.185      0.81               0.27  <-- TWO HOMES
+0.190      0.81               0.31  <-- TWO HOMES
+0.195      0.81               0.38  <-- TWO HOMES
+0.200      0.81               0.81
+0.250      0.81               0.81
+0.300      0.81               0.81
+0.350      0.81               0.81
+0.400      0.81               0.81
+0.450      0.81               0.81
+0.500      0.81               0.81
+
+Largest rate of change at the end of any run: 3.3e-09 per year (near zero = every reef had settled)
+Two homes exist for grazing between 0.180 and 0.195
+Figure saved to figures\step03_grazing_sweep.png

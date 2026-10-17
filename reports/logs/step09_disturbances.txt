@@ -1,0 +1,22 @@
+PART A - no shaking. Outcome (recovery time) and highest seaweed cover:
+
+event                               well-grazed (0.40)                     degraded (0.19)
+Mild storm           recovers in 12 yrs, max seaweed   2%   recovers in 76 yrs, max seaweed   2%
+Strong storm         recovers in 30 yrs, max seaweed   5%     TIPS to seaweed, max seaweed  32%
+Heatwave             recovers in 16 yrs, max seaweed   5%     TIPS to seaweed, max seaweed  28%
+Pollution event      recovers in 11 yrs, max seaweed   3%   recovers in 112 yrs, max seaweed   4%
+Overfishing          recovers in 50 yrs, max seaweed   0%   recovers in 50 yrs, max seaweed   0%
+Compound event       recovers in 37 yrs, max seaweed  16%     TIPS to seaweed, max seaweed  49%
+
+PART B - degraded reef (grazing 0.19) with everyday shaking (noise 0.01).
+Chance of being back in the coral home 60 years after the event (300 repeats each):
+
+  No event             73%
+  Mild storm           58%
+  Strong storm          4%
+  Heatwave             35%
+  Pollution event      50%
+  Overfishing          15%
+  Compound event        0%
+
+Figures saved in figures/

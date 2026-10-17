@@ -1,0 +1,8 @@
+194 of 200 overfished reefs collapsed (coral < 50%).
+Grazing when they collapsed: typically 0.14 (range 0.12-0.16)
+
+Warning = BOTH wobble width and slowness clearly rising (trend > 0.3):
+  overfished (collapsing)   warning in  71% of reefs   (typical trend: width +0.69, slowness +0.63)
+  not fished (steady)       warning in  27% of reefs   (typical trend: width +0.06, slowness +0.01)
+
+Figures saved in figures/

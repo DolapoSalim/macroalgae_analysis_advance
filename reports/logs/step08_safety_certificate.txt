@@ -1,0 +1,13 @@
+Searching for the best weights for version 3...
+  best weights Q = diag(1.0, 31.62, 10.0)
+
+REAL safe zone (by simulation): 34.0% of the map
+
+score                  biggest safe level c  share of map  share of REAL safe zone
+1. simple guess                    0.00e+00       0.0000%                   0.000%
+2. from the model                  7.22e-03       0.0046%                   0.013%
+3. tuned                           4.06e-01       0.1672%                   0.492%
+
+Check: 1084 reefs inside the tuned zone -> 100.0% recovered to coral
+
+Figures saved in figures/

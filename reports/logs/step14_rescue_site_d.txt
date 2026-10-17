@@ -1,0 +1,11 @@
+Site D today: coral 12%, seaweed 58%, fish 0.27
+
+plan                  safety margin  coral >50% after  chance of coral reef  fitted model says
+Do nothing                    -0.06             never                    0%      stays seaweed
+Replant coral                 -0.06             never                    0%      stays seaweed
+Remove seaweed                -0.06             never                    0%      stays seaweed
+Cut pollution                 -0.00          38 years                  100%           recovers
+Protect fish                  +0.20          30 years                  100%           recovers
+Everything together           +0.23          13 years                  100%           recovers
+
+Figures saved in figures/

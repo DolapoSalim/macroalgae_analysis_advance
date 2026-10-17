@@ -1,0 +1,27 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-9.1.1, pluggy-1.7.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\dolap\OneDrive\Documents\DOLAPO\data-analysis\macroalgae_analysis_advance
+configfile: pytest.ini
+testpaths: tests
+collecting ... collected 17 items
+
+tests/test_constraints.py::test_rules_point_inwards_at_every_edge PASSED [  5%]
+tests/test_constraints.py::test_simulations_stay_possible PASSED         [ 11%]
+tests/test_constraints.py::test_noisy_simulations_stay_possible PASSED   [ 17%]
+tests/test_estimation.py::test_true_numbers_fit_perfect_data PASSED      [ 23%]
+tests/test_estimation.py::test_wrong_numbers_fit_worse PASSED            [ 29%]
+tests/test_lyapunov.py::test_lyapunov_equation_is_solved PASSED          [ 35%]
+tests/test_lyapunov.py::test_score_falls_inside_the_certified_zone PASSED [ 41%]
+tests/test_lyapunov.py::test_reefs_in_the_certified_zone_recover PASSED  [ 47%]
+tests/test_model.py::test_rates_add_up PASSED                            [ 52%]
+tests/test_model.py::test_resting_points_really_rest PASSED              [ 58%]
+tests/test_model.py::test_coral_home_formula_matches_solver PASSED       [ 64%]
+tests/test_model.py::test_tipping_formula_matches_stability_test PASSED  [ 70%]
+tests/test_model.py::test_jacobian_does_not_depend_on_step_size PASSED   [ 76%]
+tests/test_model.py::test_bistability_window PASSED                      [ 82%]
+tests/test_numerics.py::test_tighter_solver_tolerance_gives_same_trajectory PASSED [ 88%]
+tests/test_numerics.py::test_simple_stepping_matches_accurate_solver PASSED [ 94%]
+tests/test_numerics.py::test_same_seed_same_result PASSED                [100%]
+
+============================= 17 passed in 5.39s ==============================
