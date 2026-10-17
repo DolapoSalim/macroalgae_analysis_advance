@@ -1,6 +1,11 @@
 # Keep all Markdown documents local (planning notes, guides, overviews)
 *.md
 
+# Keep the written reports local too (Word versions and the reports folder)
+*.docx
+~$*.docx
+reports/
+
 # Python
 __pycache__/
 *.py[cod]
