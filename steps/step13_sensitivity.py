@@ -15,6 +15,7 @@ Run from the project root:
     python -m steps.step13_sensitivity
 """
 
+import json
 from pathlib import Path
 
 import matplotlib
@@ -25,8 +26,8 @@ import plotly.graph_objects as go
 from scipy.stats import qmc
 
 from src.estimation import FITTED
-from src.parameters import BASELINE
-from src.sensitivity import coral_after_storm, tipping_grazing, sobol_indices
+from src.parameters import BASELINE, make_parameters
+from src.sensitivity import coral_after_storm, coral_home, sobol_indices, tipping_grazing
 
 N = 2048
 SPREAD = 2.0          # each number anywhere from baseline/2 to baseline*2
@@ -69,6 +70,17 @@ def main():
           f"{np.percentile(tip, 5):.2f} and {np.percentile(tip, 95):.2f}  (baseline 0.17)")
     print(f"  versions where today's grazing (0.40) is ALREADY below the tipping point: {np.mean(tip > 0.40):.0%}")
     print(f"  versions where a strong storm leaves coral below 50% after 50 yrs: {np.mean(storm < 0.5):.0%}")
+    fish_die = np.mean(to_params(A)["mu_H"] >= to_params(A)["r_H"])
+    print(f"  versions where fish death >= fish birth (fish can't survive at all): {fish_die:.0%}")
+
+    # What do the Step 11 fits (which disagreed on every fish number) say?
+    saved = json.loads(Path("data/fits/step11_fits.json").read_text())
+    print("\nTIPPING POINT FROM THE STEP 11 FITS (fish numbers differ, but...):")
+    for j, fit in enumerate(saved["fits"], 1):
+        p = make_parameters(**dict(zip(FITTED, fit["theta"])))
+        print(f"  fit {j}: fish birth {p['r_H']:.3f}, death {p['mu_H']:.3f}, max {p['K_H']:.3f} "
+              f"-> fish at coral home {coral_home(p)[1]:.3f}, tipping point {tipping_grazing(p):.3f}")
+    print(f"  truth: tipping point {tipping_grazing(make_parameters()):.3f}")
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
     axes[0].hist(tip, bins=50, color="#9467bd", alpha=0.8)
