@@ -1,0 +1,1063 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Will the Reef Bounce Back?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="An explorable explanation of coral reef tipping points, built on a synthetic coral–seaweed–herbivore model. For everyday readers, scientists and decision-makers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a long-form scroll story in one ~68ch reading column, with wider "bench" bands for the
+   interactive pieces (landscape, simulator, 3D wall). A sticky "Read as" bar changes how deep the
+   explanation goes: everyone / scientist / decision-maker. */
+:root {
+  --bg: #F3F7F6;
+  --surface: #FFFFFF;
+  --sunk: #E5EEED;
+  --ink: #0E2930;
+  --muted: #4E686D;
+  --line: #CFDEDD;
+  --accent: #0A7A87;
+  --accent-ink: #FFFFFF;
+  --coral: #D24F45;
+  --weed: #687F1A;
+  --fish: #2D6DB0;
+  --warn: #B4511A;
+  --ok: #2B7A4D;
+  --band: #0E2930;
+  --band-ink: #E6F1F0;
+  --band-muted: #A9C4C6;
+  --figure-bg: #FFFFFF;
+
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, "Courier New", monospace;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.6rem;
+  --step-3: clamp(1.8rem, 3.6vw, 2.4rem);
+  --step-4: clamp(2.5rem, 7vw, 4.6rem);
+  --read: 68ch;
+  --wide: 1120px;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #08171B; --surface: #0F2328; --sunk: #0B1D21; --ink: #DCEBEA; --muted: #93AEB1;
+    --line: #1F3C40; --accent: #45C3CE; --accent-ink: #04262A; --coral: #FF8577; --weed: #A9C44B;
+    --fish: #77ABEF; --warn: #F0964F; --ok: #6CCB92; --band: #0F2328; --band-ink: #DCEBEA;
+    --band-muted: #93AEB1; --figure-bg: #F4F7F7; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #08171B; --surface: #0F2328; --sunk: #0B1D21; --ink: #DCEBEA; --muted: #93AEB1;
+  --line: #1F3C40; --accent: #45C3CE; --accent-ink: #04262A; --coral: #FF8577; --weed: #A9C44B;
+  --fish: #77ABEF; --warn: #F0964F; --ok: #6CCB92; --band: #0F2328; --band-ink: #DCEBEA;
+  --band-muted: #93AEB1; --figure-bg: #F4F7F7; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 30; background: var(--bg);
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px;
+}
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.12; text-wrap: balance; margin: 0; }
+h2 { font-size: var(--step-3); font-weight: 800; letter-spacing: -0.01em; }
+h3 { font-size: var(--step-1); font-weight: 700; }
+p { margin: 0; }
+.mono, .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.eyebrow {
+  font-family: var(--font-display); font-weight: 700; font-size: var(--step--1);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+}
+
+/* ---------- frame ---------- */
+.gutter {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: var(--wide); margin-inline: auto; }
+.read { max-width: var(--read); }
+section.chapter { padding-block: clamp(48px, 8vw, 96px); border-top: 1px solid var(--line); }
+.chapter-head { display: grid; gap: 12px; margin-bottom: 28px; max-width: var(--read); }
+.stack { display: grid; gap: 18px; }
+.lede { font-size: var(--step-1); color: var(--muted); }
+
+/* ---------- sticky bar ---------- */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.topbar-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap; padding-block: 10px;
+}
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: var(--ink); text-decoration: none; }
+.brand span { color: var(--accent); }
+.readas { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.readas-label { font-family: var(--font-display); font-size: var(--step--1); color: var(--muted); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.seg button {
+  font: 600 0.875rem var(--font-display); color: var(--muted); background: none; border: 0;
+  padding: 6px 12px; border-radius: 999px; cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+
+/* ---------- hero ---------- */
+.hero { padding-block: clamp(36px, 7vw, 80px) clamp(40px, 6vw, 72px); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(28px, 4vw, 48px); align-items: center; }
+@media (min-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); } }
+.hero h1 { font-size: var(--step-4); font-weight: 800; letter-spacing: -0.025em; }
+.hero h1 em { font-style: normal; color: var(--coral); }
+.hero .lede { margin-top: 18px; max-width: 46ch; }
+.disclaimer {
+  margin-top: 18px; font-size: var(--step--1); color: var(--muted);
+  border-left: 3px solid var(--line); padding-left: 12px; max-width: 52ch;
+}
+
+/* ---------- bench (interactive panels) ---------- */
+.bench { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(14px, 2.4vw, 22px); min-width: 0; }
+.bench canvas { width: 100%; display: block; }
+.controls { display: grid; gap: 14px; margin-top: 14px; }
+.control { display: grid; gap: 4px; }
+.control label { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; display: flex; justify-content: space-between; gap: 8px; }
+.control label output { font-family: var(--font-mono); font-weight: 400; color: var(--muted); }
+.control .hint { font-size: var(--step--1); color: var(--muted); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.btnrow { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn {
+  font: 700 0.9rem var(--font-display); border: 1px solid var(--line); background: var(--sunk); color: var(--ink);
+  padding: 9px 14px; border-radius: 8px; cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.danger { color: var(--coral); }
+.status { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font: 700 0.82rem var(--font-display); border: 1px solid currentColor; }
+.pill.good { color: var(--ok); }
+.pill.bad { color: var(--coral); }
+.pill.edge { color: var(--warn); }
+.caption { font-size: var(--step--1); color: var(--muted); margin-top: 10px; }
+
+/* ---------- story cards ---------- */
+.facts { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); margin-top: 8px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 8px; align-content: start; }
+.fact .big { font-family: var(--font-display); font-weight: 800; font-size: var(--step-2); line-height: 1.1; }
+.fact .big.down { color: var(--coral); }
+.fact .big.up { color: var(--ok); }
+.fact .src { font-size: var(--step--1); color: var(--muted); }
+
+/* ---------- audience notes ---------- */
+.note { border-radius: var(--radius); padding: 14px 16px; font-size: 0.98rem; display: grid; gap: 6px; max-width: var(--read); }
+.note .tag { font: 700 0.75rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; }
+.note.sci { background: color-mix(in srgb, var(--fish) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--fish) 35%, var(--line)); }
+.note.sci .tag { color: var(--fish); }
+.note.pol { background: color-mix(in srgb, var(--ok) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--ok) 35%, var(--line)); }
+.note.pol .tag { color: var(--ok); }
+.eq { font-family: var(--font-mono); font-size: 0.86rem; line-height: 1.7; overflow-x: auto; white-space: pre; margin: 0; }
+
+/* ---------- model ingredients ---------- */
+.trio { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.ingredient { border-top: 4px solid var(--c, var(--accent)); background: var(--surface); border-radius: 0 0 var(--radius) var(--radius); padding: 16px; display: grid; gap: 6px; align-content: start; }
+.ingredient h3 { color: var(--c); }
+.rules { display: grid; gap: 10px; }
+.rule { display: grid; grid-template-columns: 1.3em minmax(0, 1fr); gap: 8px; }
+.rule .s { font-family: var(--font-mono); font-weight: 600; }
+.rule .s.plus { color: var(--ok); }
+.rule .s.minus { color: var(--coral); }
+
+/* ---------- simulator ---------- */
+.sim-grid { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .sim-grid { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); } }
+.readouts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.readout { background: var(--sunk); border-radius: 8px; padding: 10px; display: grid; gap: 2px; }
+.readout .k { font: 700 0.75rem var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; }
+.readout .v { font-family: var(--font-mono); font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font: 600 0.85rem var(--font-display); color: var(--muted); }
+.legend i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.toggle { display: flex; align-items: center; gap: 8px; font: 600 0.92rem var(--font-display); }
+
+/* ---------- findings ---------- */
+.finding { display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr); padding-block: 36px; border-top: 1px dashed var(--line); }
+.finding:first-of-type { border-top: 0; padding-top: 0; }
+@media (min-width: 960px) { .finding { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: start; } }
+.finding .claim { font-family: var(--font-display); font-weight: 800; font-size: var(--step-2); line-height: 1.15; text-wrap: balance; }
+figure { margin: 0; min-width: 0; }
+figure img { width: 100%; height: auto; display: block; background: var(--figure-bg); border-radius: 8px; border: 1px solid var(--line); }
+figcaption { font-size: var(--step--1); color: var(--muted); margin-top: 8px; }
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart text { font-family: var(--font-display); font-size: 12px; fill: var(--muted); }
+.chart .axis { stroke: var(--line); }
+.chart .gridline { stroke: var(--line); stroke-dasharray: 2 4; }
+#wall3d { width: 100%; min-height: 420px; }
+
+/* ---------- tables ---------- */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); background: var(--sunk); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--font-mono); white-space: nowrap; }
+.good-t { color: var(--ok); font-weight: 700; }
+.bad-t { color: var(--coral); font-weight: 700; }
+.edge-t { color: var(--warn); font-weight: 700; }
+
+/* ---------- messages band ---------- */
+.band { background: var(--band); color: var(--band-ink); }
+.band .eyebrow { color: color-mix(in srgb, var(--accent) 70%, var(--band-ink)); }
+.band h2 { color: var(--band-ink); }
+.msg-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); margin-top: 28px; }
+.msg { border: 1px solid color-mix(in srgb, var(--band-ink) 18%, transparent); border-radius: var(--radius); padding: 20px; display: grid; gap: 12px; align-content: start; }
+.msg.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.msg h3 { color: var(--band-ink); }
+.msg ul { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; color: var(--band-muted); }
+.msg li strong { color: var(--band-ink); }
+
+/* ---------- glossary / refs ---------- */
+.gloss { display: grid; gap: 8px; max-width: var(--read); }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+summary { cursor: pointer; font-family: var(--font-display); font-weight: 700; }
+details p { margin-top: 6px; color: var(--muted); }
+.refs { display: grid; gap: 10px; max-width: 80ch; padding-left: 1.2em; font-size: 0.95rem; }
+.refs li { overflow-wrap: anywhere; }
+ol.steps { display: grid; gap: 8px; padding-left: 1.4em; max-width: var(--read); margin: 0; }
+footer { padding-block: 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: var(--step--1); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<!-- ======================= TOP BAR ======================= -->
+<header class="topbar gutter">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="#top">Reef <span>tipping points</span></a>
+    <div class="readas" role="group" aria-label="Choose how deep the explanations go">
+      <span class="readas-label">Read as</span>
+      <div class="seg">
+        <button type="button" id="aud-everyone" data-mode="everyone" aria-pressed="true">Everyone</button>
+        <button type="button" id="aud-scientist" data-mode="scientist" aria-pressed="false">Scientist</button>
+        <button type="button" id="aud-policy" data-mode="policy" aria-pressed="false">Decision-maker</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ======================= HERO ======================= -->
+<section class="hero gutter">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">An explorable explanation</p>
+      <h1>Will the reef bounce <em>back</em>?</h1>
+      <p class="lede">After a storm, some coral reefs recover. Others are taken over by seaweed and stay that way. We built a practice reef inside a computer to understand why, and to test the tools scientists use to predict it.</p>
+      <p class="disclaimer">Everything on this page about our model comes from a made-up reef with illustrative numbers. It teaches how to study real reefs. It does not forecast any particular reef.</p>
+    </div>
+
+    <div class="bench" aria-labelledby="land-title">
+      <h3 id="land-title">The reef as a ball on a landscape</h3>
+      <p class="caption" style="margin-top:4px">Valleys are places the reef settles. Slide the fish down and watch a second valley open up.</p>
+      <canvas id="landscape" height="260" aria-label="A curve with valleys. A ball shows the state of the reef: right valley is a coral reef, left valley is a seaweed reef."></canvas>
+      <div class="controls">
+        <div class="control">
+          <label for="land-fish">Plant-eating fish <output id="land-fish-out" for="land-fish">plenty</output></label>
+          <input id="land-fish" type="range" min="0" max="100" value="88">
+        </div>
+        <div class="btnrow">
+          <button type="button" class="btn danger" id="land-push">Storm: push the reef</button>
+          <button type="button" class="btn" id="land-reset">Put the ball back on coral</button>
+        </div>
+        <p class="status" id="land-status" aria-live="polite"></p>
+      </div>
+      <p class="caption">An illustration of the idea, not the model's exact shape. The real model is explored in the simulator further down.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= THE PROBLEM ======================= -->
+<section class="chapter gutter" id="problem">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="eyebrow">The real-world problem</p>
+      <h2>Reefs that flip, and reefs that recover</h2>
+      <p class="lede">Coral reefs can change character completely. Scientists call this a regime shift: a coral reef becomes a seaweed reef.</p>
+    </div>
+    <div class="facts">
+      <div class="fact">
+        <p class="eyebrow">Jamaica</p>
+        <p class="big down">&gt;50% → &lt;5%</p>
+        <p>Coral cover fell from more than 50% in the late 1970s to less than 5% by 1994. Fleshy seaweed covered more than 90% of the reef.</p>
+        <p class="src">Hughes 1994</p>
+      </div>
+      <div class="fact">
+        <p class="eyebrow">Caribbean, 1983</p>
+        <p class="big down">Sea urchins die off</p>
+        <p>A disease killed the grazing sea urchin <i>Diadema</i>. It was first seen in Panama in January 1983 and had spread across the Caribbean by January 1984.</p>
+        <p class="src">Lessios et al. 1984</p>
+      </div>
+      <div class="fact">
+        <p class="eyebrow">Seychelles</p>
+        <p class="big">12 of 21 recovered</p>
+        <p>After losing more than 90% of live coral, 12 of 21 reefs recovered towards coral. The other 9 shifted to fleshy seaweed.</p>
+        <p class="src">Graham et al. 2015</p>
+      </div>
+      <div class="fact">
+        <p class="eyebrow">Scott Reef, Australia</p>
+        <p class="big up">9% → 44%</p>
+        <p>Coral cover rose from 9% to 44% within 12 years of a bleaching event, even though the supply of coral larvae fell by 94% for six years.</p>
+        <p class="src">Gilmour et al. 2013</p>
+      </div>
+    </div>
+    <div class="stack" style="margin-top:28px">
+      <p class="read">So why do some reefs bounce back while others flip? A big part of the answer is <strong>plant-eating fish and urchins</strong>, the reef's gardeners. In one marine reserve, a doubling of grazing went with a fourfold drop in seaweed cover (Mumby et al. 2006).</p>
+      <aside class="note sci" data-aud="scientist">
+        <p class="tag">For scientists</p>
+        <p>Whether reefs truly have alternative stable states is debated (Dudgeon et al. 2010; Mumby, Steneck &amp; Hastings 2013). Our workflow therefore <em>tests</em> for bistability in the model rather than assuming it.</p>
+      </aside>
+      <aside class="note pol" data-aud="policy">
+        <p class="tag">For decision-makers</p>
+        <p>Disturbances are becoming more frequent. Across 100 reef locations, the median time between severe bleaching events is now only 6 years (Hughes et al. 2018). Reefs have less time to recover between hits.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= THE MODEL ======================= -->
+<section class="chapter gutter" id="model">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="eyebrow">What we built</p>
+      <h2>A practice reef with three ingredients</h2>
+      <p class="lede">Our computer reef tracks three numbers. A set of rules says how fast each one goes up or down.</p>
+    </div>
+    <div class="trio">
+      <div class="ingredient" style="--c: var(--coral)">
+        <h3>Coral</h3>
+        <div class="rules">
+          <p class="rule"><span class="s plus">+</span><span>grows onto bare rock</span></p>
+          <p class="rule"><span class="s plus">+</span><span>baby corals settle from the sea</span></p>
+          <p class="rule"><span class="s minus">−</span><span>seaweed grows over it</span></p>
+          <p class="rule"><span class="s minus">−</span><span>it dies naturally</span></p>
+        </div>
+      </div>
+      <div class="ingredient" style="--c: var(--weed)">
+        <h3>Seaweed</h3>
+        <div class="rules">
+          <p class="rule"><span class="s plus">+</span><span>grows onto bare rock, faster with pollution</span></p>
+          <p class="rule"><span class="s plus">+</span><span>takes the space of coral it kills</span></p>
+          <p class="rule"><span class="s minus">−</span><span>eaten by fish and urchins</span></p>
+          <p class="rule"><span class="s minus">−</span><span>dies or washes away</span></p>
+        </div>
+      </div>
+      <div class="ingredient" style="--c: var(--fish)">
+        <h3>Plant-eating fish</h3>
+        <div class="rules">
+          <p class="rule"><span class="s plus">+</span><span>breed, up to a limit</span></p>
+          <p class="rule"><span class="s plus">+</span><span>more food means more fish</span></p>
+          <p class="rule"><span class="s minus">−</span><span>die naturally</span></p>
+          <p class="rule"><span class="s minus">−</span><span>are caught by fishing</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="stack" style="margin-top:28px">
+      <p class="read"><strong>The key twist:</strong> fish can only eat so fast. When seaweed is everywhere, they cannot keep up, so seaweed spreads even faster. This "the more seaweed, the harder to stop" effect is what can create a tipping point.</p>
+      <p class="read"><strong>Why made-up data first?</strong> Because we wrote the rules ourselves, we know the right answers. That lets us check whether the analysis methods actually work before anyone trusts them on a real reef, where nobody knows the answer.</p>
+      <aside class="note sci" data-aud="scientist">
+        <p class="tag">For scientists: the model</p>
+        <pre class="eq">B   = 1 − C − M                     (free space)
+dC/dt = r_C·C·B + r_rec·B − a_CM·M·C − μ_C·C
+dM/dt = (r_M + β_N·N)·M·B + a_CM·M·C − G_max·H·M/(K_G + M) − μ_M·M
+dH/dt = r_H·H·(1 − H/K_H) + q_M·M·H − μ_H·H − F_H·H</pre>
+        <p>Space-limited competition (as in Mumby et al. 2007) keeps C + M ≤ 1 without clipping. Holling type II grazing (Holling 1959) provides the positive feedback. Parameters are illustrative, not field estimates. Time is in years.</p>
+      </aside>
+      <aside class="note pol" data-aud="policy">
+        <p class="tag">For decision-makers</p>
+        <p>Two of the rules are things people control: <strong>fishing pressure</strong> on plant-eating fish, and <strong>nutrient pollution</strong>. The rest is biology. That split matters for which actions work.</p>
+      </aside>
+      <p class="read" style="color:var(--muted); font-size: var(--step--1)">What the model leaves out: temperature and bleaching, turf algae and rubble, different coral and fish species, seaweed drifting in from other reefs, seasons, and differences across the reef. "All models are wrong, but some are useful" (Box 1979).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= SIMULATOR ======================= -->
+<section class="chapter gutter" id="simulator">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="eyebrow">Try it yourself</p>
+      <h2>Run the reef</h2>
+      <p class="lede">This runs the actual model in your browser. Set fishing and pollution, then hit the reef with a storm and watch what happens over the following decades.</p>
+    </div>
+    <div class="sim-grid">
+      <div class="bench">
+        <div class="legend" aria-hidden="true">
+          <span><i style="background:var(--coral)"></i>Coral cover</span>
+          <span><i style="background:var(--weed)"></i>Seaweed cover</span>
+          <span><i style="background:var(--fish)"></i>Plant-eating fish</span>
+        </div>
+        <canvas id="simchart" height="320" aria-label="Line chart of coral, seaweed and fish over the last 100 simulated years"></canvas>
+        <div class="readouts">
+          <div class="readout"><span class="k" style="color:var(--coral)">Coral</span><span class="v" id="ro-c">–</span></div>
+          <div class="readout"><span class="k" style="color:var(--weed)">Seaweed</span><span class="v" id="ro-m">–</span></div>
+          <div class="readout"><span class="k" style="color:var(--fish)">Fish</span><span class="v" id="ro-h">–</span></div>
+        </div>
+      </div>
+      <div class="bench">
+        <p class="status" id="sim-status" aria-live="polite"></p>
+        <p class="caption" id="sim-explain" style="margin-top:6px"></p>
+        <div class="controls">
+          <div class="control">
+            <label for="sim-fishing">Fishing pressure <output id="sim-fishing-out" for="sim-fishing">none</output></label>
+            <input id="sim-fishing" type="range" min="0" max="0.07" step="0.005" value="0">
+          </div>
+          <div class="control">
+            <label for="sim-nutrients">Nutrient pollution <output id="sim-nutrients-out" for="sim-nutrients">clean</output></label>
+            <input id="sim-nutrients" type="range" min="0.5" max="2" step="0.1" value="0.5">
+          </div>
+          <div class="control" data-aud="scientist">
+            <label for="sim-grazing">Grazing strength G<sub>max</sub> <output id="sim-grazing-out" for="sim-grazing">0.40</output></label>
+            <input id="sim-grazing" type="range" min="0.1" max="0.6" step="0.01" value="0.4">
+            <p class="hint">Baseline 0.40. The model's bistable window at baseline settings is 0.18 to 0.195.</p>
+          </div>
+          <label class="toggle" for="sim-noise"><input type="checkbox" id="sim-noise"> Everyday ups and downs (random noise)</label>
+          <div class="btnrow">
+            <button type="button" class="btn danger" id="ev-storm">Strong storm</button>
+            <button type="button" class="btn danger" id="ev-heat">Heatwave</button>
+          </div>
+          <div class="btnrow">
+            <button type="button" class="btn" id="ev-plant">Replant coral</button>
+            <button type="button" class="btn" id="ev-weed">Remove seaweed</button>
+          </div>
+          <div class="btnrow">
+            <button type="button" class="btn primary" id="sim-play">Pause</button>
+            <button type="button" class="btn" id="sim-reset">Reset reef</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="stack" style="margin-top:20px">
+      <p class="caption read">Things to try: hit the healthy reef with a strong storm (it recovers). Then set fishing to about 0.04 and pollution to 1.5, and storm it again. Then try replanting coral without changing fishing.</p>
+      <aside class="note sci" data-aud="scientist">
+        <p class="tag">For scientists</p>
+        <p>Fourth-order Runge–Kutta, Δt = 0.05 yr; noise is additive Gaussian (σ = 0.01, Euler–Maruyama), clipped to the feasible set. The "safety margin" is G<sub>max</sub> − G<sub>crit</sub>, where G<sub>crit</sub> = K<sub>G</sub>[(r<sub>M</sub>+β<sub>N</sub>N)(1−C*) + a<sub>CM</sub>C* − μ<sub>M</sub>]/H* is the grazing level below which macroalgae can invade the M = 0 coral equilibrium.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FINDINGS ======================= -->
+<section class="chapter gutter" id="findings">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="eyebrow">What we found</p>
+      <h2>Seven lessons from the practice reef</h2>
+      <p class="lede">Each lesson comes from a separate experiment on the model. The figures are the actual results.</p>
+    </div>
+
+    <article class="finding">
+      <div class="stack">
+        <p class="claim">The reef has a tipping point, and falling is easier than climbing back.</p>
+        <p>We turned down the fish grazing step by step and checked where the reef settled. Above a grazing level of about 0.20 it always became a coral reef. Below 0.18 it always became a seaweed reef. In between, the same conditions gave two possible outcomes, depending only on where the reef started.</p>
+        <aside class="note sci" data-aud="scientist"><p class="tag">For scientists</p><p>Bistability for G<sub>max</sub> 0.180–0.195 (brute-force sweep, two initial conditions, 3000-year runs). The lower edge is a transcritical-type invasion threshold at the M = 0 boundary (analytic G<sub>crit</sub> = 0.172); the upper edge is a fold. Confirmed by root-finding and Jacobian eigenvalues.</p></aside>
+        <aside class="note pol" data-aud="policy"><p class="tag">For decision-makers</p><p>Once a reef has flipped, returning conditions to just above the tipping point is not enough. Recovery needs conditions clearly better than those under which it collapsed.</p></aside>
+      </div>
+      <figure class="chart">
+        <div id="sweepchart"></div>
+        <figcaption>Where each model reef finally settles as grazing changes. Circles started as coral reefs; crosses started as seaweed reefs. In the shaded band, the start decides the outcome.</figcaption>
+      </figure>
+    </article>
+
+    <article class="finding">
+      <div class="stack">
+        <p class="claim">Plant-eating fish are the reef's main protection.</p>
+        <p>Close to the tipping point, we asked: how much seaweed can a reef have and still recover? The answer depends strongly on fish. A half-coral reef with few fish could tolerate about 1% seaweed. With many fish it could tolerate about 44%.</p>
+        <p class="caption">Drag the 3D surface to rotate it. Higher means safer.</p>
+        <aside class="note sci" data-aud="scientist"><p class="tag">For scientists</p><p>Basin boundary of the coral attractor at G<sub>max</sub> = 0.19, found by bisection on initial M for each (C, H). Overall, 34% of the sampled state space drains to the coral equilibrium. Starts with M exactly 0 always recover, an artefact of having no external macroalgal supply.</p></aside>
+      </div>
+      <figure>
+        <div id="wall3d" role="img" aria-label="3D surface: the most seaweed a reef can have and still recover, for each level of coral and fish"></div>
+        <figcaption>The "tolerance wall" at a grazing level inside the danger zone (0.19).</figcaption>
+      </figure>
+    </article>
+
+    <article class="finding">
+      <div class="stack">
+        <p class="claim">"Stable" is not the same as "safe".</p>
+        <p>We put healthy reefs in the danger zone and shook them gently with random everyday ups and downs. There was no storm. Chance alone sent many of them over the edge. Closest to the tipping point, gentle shaking flipped about half of healthy reefs within 50 years.</p>
+        <aside class="note sci" data-aud="scientist"><p class="tag">For scientists</p><p>Additive noise σ = 0.01: 48% / 25% / 10% transitions within 50 y at G<sub>max</sub> 0.185 / 0.19 / 0.195 (500 replicates). Result unchanged when Δt went from 0.05 to 0.01 (58.5% both, σ = 0.02).</p></aside>
+      </div>
+      <figure>
+        <img src="figures/step06_example_reefs.png" alt="Twelve identical model reefs shaken at random: nine lost their coral, three stayed healthy" loading="lazy">
+        <figcaption>Twelve identical reefs, same conditions, different fates. Nine tipped (red), three stayed healthy (blue).</figcaption>
+      </figure>
+    </article>
+
+    <article class="finding">
+      <div class="stack">
+        <p class="claim">A reef can look healthy for decades after it is already doomed.</p>
+        <p>We slowly overfished model reefs and surveyed them once a year. Coral looked fine for decades after grazing had passed the tipping point. Warning signs did appear beforehand: year-to-year wobbles grew wider and slower. They caught 71% of collapses, but also gave false alarms on 27% of reefs that were fine.</p>
+        <aside class="note sci" data-aud="scientist"><p class="tag">For scientists</p><p>Critical slowing down: rolling variance and lag-1 autocorrelation after Gaussian detrending, Kendall τ &gt; 0.3 for both (Scheffer et al. 2009; Dakos et al. 2012). False-positive rate from a non-transitioning control, as recommended by Boettiger &amp; Hastings (2012).</p></aside>
+        <aside class="note pol" data-aud="policy"><p class="tag">For decision-makers</p><p>Do not wait for visible decline before acting. Treat warning signals as one input, knowing that they miss some collapses and sometimes raise false alarms.</p></aside>
+      </div>
+      <figure>
+        <img src="figures/step07_example_warning.png" alt="One overfished model reef: coral stays high for many years, then collapses; wobble width and slowness rise before the collapse" loading="lazy">
+        <figcaption>One overfished model reef. Top: coral cover. Middle and bottom: the two warning signs rising before the collapse.</figcaption>
+      </figure>
+    </article>
+
+    <article class="finding">
+      <div class="stack">
+        <p class="claim">The same storm can have opposite outcomes.</p>
+        <p>With plenty of fish, the model reef survived every event we tried, even everything at once. With few fish, a strong storm or a heatwave pushed it into the seaweed state for good. Combined events were worst: none of the shaken degraded reefs recovered.</p>
+      </div>
+      <figure>
+        <img src="figures/step09_recovery_chance.png" alt="Bar chart: chance of recovery for a degraded model reef after each type of event" loading="lazy">
+        <figcaption>A degraded model reef with everyday shaking: chance of being back in the coral state 60 years after each event (300 repeats each).</figcaption>
+      </figure>
+    </article>
+
+    <article class="finding">
+      <div class="stack">
+        <p class="claim">Mathematical guarantees are trustworthy, but very cautious.</p>
+        <p>We built a score, like a GPS "distance to home", that we could show always shrinks inside a zone. Every reef inside that zone is guaranteed to recover. The catch: the guaranteed zone covered less than 1% of the reefs that actually recover.</p>
+        <aside class="note sci" data-aud="scientist"><p class="tag">For scientists</p><p>Quadratic Lyapunov function V = (x−x*)ᵀP(x−x*) with P from JᵀP + PJ = −Q. Identity P certified nothing; Q = I gave 0.013% of the simulated basin; tuned Q gave 0.49%. Every sampled state inside the tuned set recovered. The check is sampling-based, not a formal sum-of-squares proof (Tan &amp; Packard 2008).</p></aside>
+      </div>
+      <figure>
+        <img src="figures/step08_certificate_slice.png" alt="Map of safe (blue) and tipping (red) starting reefs, with small guaranteed-safe zones drawn around the coral home" loading="lazy">
+        <figcaption>Blue: reefs that really recover. Orange and green outlines: the guaranteed zones. Right: zoomed in around the healthy state.</figcaption>
+      </figure>
+    </article>
+
+    <article class="finding">
+      <div class="stack">
+        <p class="claim">Data cannot tell us everything, but it can tell us what matters.</p>
+        <p>We made realistic, messy survey data from six virtual reef sites and asked the computer to work out the rules from that data alone. Most numbers came back close. Fish birth and death rates could not be separated: the data only ever "sees" the difference between them. Even so, the fitted model put the tipping point within about 11% of the truth and gave the right management advice.</p>
+        <aside class="note sci" data-aud="scientist"><p class="tag">For scientists</p><p>Structural non-identifiability: the herbivore equation depends on (r<sub>H</sub> − μ<sub>H</sub>) and r<sub>H</sub>/K<sub>H</sub> only (zero Fisher-information eigenvalue; flat profile likelihood for μ<sub>H</sub>; Raue et al. 2009). Three fits disagreed on r<sub>H</sub>, μ<sub>H</sub>, K<sub>H</sub> but all gave H* = 0.490 and G<sub>crit</sub> = 0.153 (truth 0.172).</p></aside>
+      </div>
+      <figure>
+        <img src="figures/step12_landscapes_3d.png" alt="Two 3D misfit landscapes: a tilted valley for coral growth versus death, and a perfectly flat valley floor for fish birth versus death" loading="lazy">
+        <figcaption>How well the model fits the data (lower is better). Left: coral growth and death trade off along a tilted valley. Right: fish birth and death give a perfectly flat valley floor.</figcaption>
+      </figure>
+    </article>
+  </div>
+</section>
+
+<!-- ======================= RESCUE ======================= -->
+<section class="chapter gutter" id="rescue">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="eyebrow">Management experiment</p>
+      <h2>Can we rescue a seaweed reef?</h2>
+      <p class="lede">Site D was fished and polluted, and turned to seaweed after a storm. We tried six rescue plans on it.</p>
+    </div>
+    <div class="finding" style="border-top:0; padding-top:0">
+      <figure class="chart">
+        <div id="rescuechart"></div>
+        <div class="legend" id="rescuelegend" style="margin-top:8px"></div>
+        <figcaption>Coral cover at Site D under each plan, from the reef's state at the end of monitoring (no random shaking).</figcaption>
+      </figure>
+      <div class="stack">
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Plan</th><th>Coral valley?</th><th>Coral above 50%</th></tr></thead>
+            <tbody>
+              <tr><td>Do nothing</td><td class="bad-t">No</td><td>never</td></tr>
+              <tr><td>Replant coral</td><td class="bad-t">No</td><td>never</td></tr>
+              <tr><td>Remove seaweed</td><td class="bad-t">No</td><td>never</td></tr>
+              <tr><td>Cut pollution</td><td class="edge-t">Knife-edge</td><td class="num">38 years</td></tr>
+              <tr><td>Protect fish</td><td class="good-t">Yes</td><td class="num">30 years</td></tr>
+              <tr><td>Everything together</td><td class="good-t">Yes</td><td class="num">13 years</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Moving the ball vs reshaping the landscape.</strong> Replanting coral or removing seaweed moves the ball, but Site D's landscape had no coral valley, so the reef rolled straight back. Protecting fish reshapes the landscape and creates a coral valley. Then hands-on work helps the reef get there faster.</p>
+        <aside class="note pol" data-aud="policy"><p class="tag">For decision-makers</p><p>Fix the causes first: protect plant-eating fish and water quality. Restoration on its own failed in our model. Combining both gave the fastest recovery. This matches the ecological idea of state versus parameter changes (Beisner et al. 2003).</p></aside>
+        <aside class="note sci" data-aud="scientist"><p class="tag">For scientists</p><p>Safety margin G<sub>max</sub> − G<sub>crit</sub>: −0.06 (do nothing, replant, removal), ≈0 (cut nutrients), +0.20 (stop fishing), +0.23 (all). Recovery probability with noise over 50 y: 0%, 0%, 0%, 100%, 100%, 100%. The fitted model gave the same verdict for every plan.</p></aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= TRUST ======================= -->
+<section class="chapter gutter" id="trust">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="eyebrow">Reading the results honestly</p>
+      <h2>What to trust, and what not to</h2>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>We can trust, within this model</th><th>Do not over-trust</th></tr></thead>
+        <tbody>
+          <tr><td>Two possible states and a tipping point exist. Several independent methods agree.</td><td>The exact numbers. They come from illustrative inputs, in model units.</td></tr>
+          <tr><td>The direction of effects: more fish is safer, less pollution is safer, combined events are worst.</td><td>Any claim about a specific real reef.</td></tr>
+          <tr><td>The ranking of rescue plans: fixing causes beats restoration alone, and combining is fastest.</td><td>The "cut pollution" result, which sits on a knife-edge.</td></tr>
+          <tr><td>The methods work when the truth is known.</td><td>Warning-signal hit and false-alarm rates. They depend on settings we chose.</td></tr>
+          <tr><td>The code. 19 automatic checks pass, and a deliberately planted bug was caught.</td><td>The guaranteed safe zone as a formal proof. It is checked by sampling.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= MESSAGES BAND ======================= -->
+<section class="band gutter" id="messages" style="padding-block: clamp(48px, 8vw, 96px)">
+  <div class="wrap">
+    <p class="eyebrow">Take-home messages</p>
+    <h2>What this means for you</h2>
+    <div class="msg-grid">
+      <div class="msg" data-for="everyone">
+        <h3>For everyone</h3>
+        <ul>
+          <li><strong>Reefs can have two homes:</strong> coral or seaweed. Once flipped, a reef can stay stuck.</li>
+          <li><strong>Plant-eating fish are the reef's gardeners.</strong> Protecting them was the most powerful action in our model.</li>
+          <li><strong>A reef can look fine while already in trouble.</strong></li>
+          <li><strong>Replanting coral helps only when conditions are right.</strong></li>
+          <li><strong>This is a practice model, not a forecast.</strong></li>
+        </ul>
+      </div>
+      <div class="msg" data-for="scientist">
+        <h3>For scientists</h3>
+        <ul>
+          <li><strong>Test the workflow on a known truth first.</strong> The virtual reef exposed problems real data would hide.</li>
+          <li><strong>Report decision-relevant combinations,</strong> not only raw parameters. G<sub>crit</sub> was identifiable when its ingredients were not.</li>
+          <li><strong>Quadratic Lyapunov estimates were extremely conservative</strong> (0.49% of the basin). Sum-of-squares methods are the formal next step.</li>
+          <li><strong>Always report a control</strong> for early-warning signals: 71% hits, 27% false alarms here.</li>
+          <li><strong>Check what kind of threshold you have.</strong> Here the lower edge is an invasion threshold, the upper edge a fold.</li>
+        </ul>
+      </div>
+      <div class="msg" data-for="policy">
+        <h3>For decision-makers</h3>
+        <ul>
+          <li><strong>Keep a safety margin above the tipping point.</strong> The well-grazed model reef survived every event.</li>
+          <li><strong>Protect herbivores and water quality first.</strong> Restoration works only after that.</li>
+          <li><strong>Combine actions for speed:</strong> 13 years instead of 30 in our model.</li>
+          <li><strong>Do not wait for visible decline.</strong></li>
+          <li><strong>Local action is necessary, not sufficient.</strong> Real evidence shows local protection gave "little or no resistance to extreme heat" during mass bleaching (Hughes et al. 2017).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= METHODS ======================= -->
+<section class="chapter gutter" id="methods">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="eyebrow">How it was done</p>
+      <h2>The workflow, step by step</h2>
+      <p class="lede">Fifteen steps, from writing down the rules to checking our own code. Each step is a script that anyone can rerun.</p>
+    </div>
+    <ol class="steps">
+      <li><strong>Write the rules</strong> and check every process points the right way.</li>
+      <li><strong>First simulation:</strong> both test reefs recover to the same healthy state.</li>
+      <li><strong>Turn the grazing dial</strong> to look for a tipping point.</li>
+      <li><strong>Find the resting points</strong> and nudge each one to test its stability.</li>
+      <li><strong>Map the valleys:</strong> which starting reefs recover.</li>
+      <li><strong>Shake the ground:</strong> add random everyday ups and downs.</li>
+      <li><strong>Look for warning signs</strong> before collapse.</li>
+      <li><strong>Build a safety certificate</strong> (Lyapunov function).</li>
+      <li><strong>Hit the reef</strong> with storms, heatwaves, pollution and overfishing.</li>
+      <li><strong>Make realistic messy survey data</strong> for six virtual sites.</li>
+      <li><strong>Fit the model</strong> to that data, as a real researcher would.</li>
+      <li><strong>Check which numbers the data can pin down</strong> (identifiability).</li>
+      <li><strong>Ask which numbers matter most</strong> (global sensitivity).</li>
+      <li><strong>Try rescue plans</strong> on a collapsed site.</li>
+      <li><strong>Check the checks:</strong> 19 automatic tests, plus a planted bug.</li>
+    </ol>
+    <aside class="note sci" data-aud="scientist" style="margin-top:20px">
+      <p class="tag">For scientists: reproducibility</p>
+      <p>Python 3.13.3 with NumPy 2.2.6, SciPy 1.17.1, pandas 2.3.0, Matplotlib 3.10.3 and Plotly 7.1.0. Each step runs as <span class="mono">python -m steps.stepNN_name</span>; tests run with <span class="mono">python -m pytest</span>. Every reported number traces to a logged run. A full methods manuscript is available from the author.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ======================= GLOSSARY ======================= -->
+<section class="chapter gutter" id="glossary">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="eyebrow">Words used on this page</p>
+      <h2>Glossary</h2>
+    </div>
+    <div class="gloss">
+      <details><summary>Regime shift (phase shift)</summary><p>When a whole ecosystem changes character, for example a coral reef becoming a seaweed reef.</p></details>
+      <details><summary>Tipping point (bifurcation)</summary><p>A condition at which the reef's possible outcomes suddenly change, such as a coral valley disappearing.</p></details>
+      <details><summary>Stable state (attractor)</summary><p>A condition the reef settles into and returns to after small pushes. A valley in the landscape picture.</p></details>
+      <details><summary>Bistability</summary><p>Two stable states existing under the same conditions. Which one the reef ends up in depends on its past.</p></details>
+      <details><summary>Hysteresis</summary><p>Getting back is harder than falling. A collapsed reef needs better conditions to recover than it had when it collapsed.</p></details>
+      <details><summary>Basin of attraction</summary><p>All the starting conditions that end in the same stable state. The area that drains into one valley.</p></details>
+      <details><summary>Noise (stochasticity)</summary><p>Small random ups and downs, such as weather or fish numbers varying from year to year.</p></details>
+      <details><summary>Critical slowing down</summary><p>Before a tipping point, the reef recovers more and more slowly from small knocks. This makes year-to-year wobbles wider and slower.</p></details>
+      <details><summary>Lyapunov function</summary><p>A score, like "distance to home", that can be shown to always decrease. If it does inside a zone, every reef in that zone is guaranteed to recover.</p></details>
+      <details><summary>Parameter</summary><p>A fixed number in the rules, such as how fast coral grows.</p></details>
+      <details><summary>Model fitting (parameter estimation)</summary><p>Searching for the parameter values that make the model match survey data best.</p></details>
+      <details><summary>Identifiability</summary><p>Whether the data can actually pin down a parameter. Some can only ever be learned in combination with others.</p></details>
+      <details><summary>Sensitivity analysis</summary><p>Finding out which parameters change the results the most when they are uncertain.</p></details>
+      <details><summary>Synthetic data</summary><p>Data made up by a computer model, so the true answer is known.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= REFERENCES ======================= -->
+<section class="chapter gutter" id="references">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="eyebrow">Sources</p>
+      <h2>References</h2>
+      <p class="lede">Every real-world fact on this page is quoted from these sources. Each reference was checked against its DOI record.</p>
+    </div>
+    <ol class="refs">
+      <li>Beisner, B. E., Haydon, D. T. &amp; Cuddington, K. (2003). Alternative stable states in ecology. <i>Frontiers in Ecology and the Environment</i> 1(7): 376–382. <a href="https://doi.org/10.1890/1540-9295(2003)001[0376:ASSIE]2.0.CO;2">doi:10.1890/1540-9295(2003)001[0376:ASSIE]2.0.CO;2</a></li>
+      <li>Boettiger, C. &amp; Hastings, A. (2012). Quantifying limits to detection of early warning for critical transitions. <i>Journal of the Royal Society Interface</i> 9(75): 2527–2539. <a href="https://doi.org/10.1098/rsif.2012.0125">doi:10.1098/rsif.2012.0125</a></li>
+      <li>Box, G. E. P. (1979). Robustness in the strategy of scientific model building. In Launer &amp; Wilkinson (Eds.), <i>Robustness in Statistics</i>, pp. 201–236. Academic Press. <a href="https://doi.org/10.1016/B978-0-12-438150-6.50018-2">doi:10.1016/B978-0-12-438150-6.50018-2</a></li>
+      <li>Dakos, V., Carpenter, S. R., Brock, W. A., et al. (2012). Methods for detecting early warnings of critical transitions in time series illustrated using simulated ecological data. <i>PLoS ONE</i> 7(7): e41010. <a href="https://doi.org/10.1371/journal.pone.0041010">doi:10.1371/journal.pone.0041010</a></li>
+      <li>Dudgeon, S. R., Aronson, R. B., Bruno, J. F. &amp; Precht, W. F. (2010). Phase shifts and stable states on coral reefs. <i>Marine Ecology Progress Series</i> 413: 201–216. <a href="https://doi.org/10.3354/meps08751">doi:10.3354/meps08751</a></li>
+      <li>Gilmour, J. P., Smith, L. D., Heyward, A. J., Baird, A. H. &amp; Pratchett, M. S. (2013). Recovery of an isolated coral reef system following severe disturbance. <i>Science</i> 340(6128): 69–71. <a href="https://doi.org/10.1126/science.1232310">doi:10.1126/science.1232310</a></li>
+      <li>Graham, N. A. J., Jennings, S., MacNeil, M. A., Mouillot, D. &amp; Wilson, S. K. (2015). Predicting climate-driven regime shifts versus rebound potential in coral reefs. <i>Nature</i> 518(7537): 94–97. <a href="https://doi.org/10.1038/nature14140">doi:10.1038/nature14140</a></li>
+      <li>Holling, C. S. (1959). Some characteristics of simple types of predation and parasitism. <i>The Canadian Entomologist</i> 91(7): 385–398. <a href="https://doi.org/10.4039/Ent91385-7">doi:10.4039/Ent91385-7</a></li>
+      <li>Hughes, T. P. (1994). Catastrophes, phase shifts, and large-scale degradation of a Caribbean coral reef. <i>Science</i> 265(5178): 1547–1551. <a href="https://doi.org/10.1126/science.265.5178.1547">doi:10.1126/science.265.5178.1547</a></li>
+      <li>Hughes, T. P., Kerry, J. T., Álvarez-Noriega, M., et al. (2017). Global warming and recurrent mass bleaching of corals. <i>Nature</i> 543(7645): 373–377. <a href="https://doi.org/10.1038/nature21707">doi:10.1038/nature21707</a></li>
+      <li>Hughes, T. P., Anderson, K. D., Connolly, S. R., et al. (2018). Spatial and temporal patterns of mass bleaching of corals in the Anthropocene. <i>Science</i> 359(6371): 80–83. <a href="https://doi.org/10.1126/science.aan8048">doi:10.1126/science.aan8048</a></li>
+      <li>Lessios, H. A., Robertson, D. R. &amp; Cubit, J. D. (1984). Spread of <i>Diadema</i> mass mortality through the Caribbean. <i>Science</i> 226(4672): 335–337. <a href="https://doi.org/10.1126/science.226.4672.335">doi:10.1126/science.226.4672.335</a></li>
+      <li>Mumby, P. J., Dahlgren, C. P., Harborne, A. R., et al. (2006). Fishing, trophic cascades, and the process of grazing on coral reefs. <i>Science</i> 311(5757): 98–101. <a href="https://doi.org/10.1126/science.1121129">doi:10.1126/science.1121129</a></li>
+      <li>Mumby, P. J., Hastings, A. &amp; Edwards, H. J. (2007). Thresholds and the resilience of Caribbean coral reefs. <i>Nature</i> 450(7166): 98–101. <a href="https://doi.org/10.1038/nature06252">doi:10.1038/nature06252</a></li>
+      <li>Mumby, P. J., Steneck, R. S. &amp; Hastings, A. (2013). Evidence for and against the existence of alternate attractors on coral reefs. <i>Oikos</i> 122(4): 481–491. <a href="https://doi.org/10.1111/j.1600-0706.2012.00262.x">doi:10.1111/j.1600-0706.2012.00262.x</a></li>
+      <li>Raue, A., Kreutz, C., Maiwald, T., et al. (2009). Structural and practical identifiability analysis of partially observed dynamical models by exploiting the profile likelihood. <i>Bioinformatics</i> 25(15): 1923–1929. <a href="https://doi.org/10.1093/bioinformatics/btp358">doi:10.1093/bioinformatics/btp358</a></li>
+      <li>Scheffer, M., Bascompte, J., Brock, W. A., et al. (2009). Early-warning signals for critical transitions. <i>Nature</i> 461(7260): 53–59. <a href="https://doi.org/10.1038/nature08227">doi:10.1038/nature08227</a></li>
+      <li>Tan, W. &amp; Packard, A. (2008). Stability region analysis using polynomial and composite polynomial Lyapunov functions and sum-of-squares programming. <i>IEEE Transactions on Automatic Control</i> 53(2): 565–571. <a href="https://doi.org/10.1109/TAC.2007.914221">doi:10.1109/TAC.2007.914221</a></li>
+    </ol>
+  </div>
+</section>
+</main>
+
+<footer class="gutter">
+  <div class="wrap" style="display:grid; gap:6px">
+    <p>Made by Dolapo Olatoye, October 2026.</p>
+    <p>The model reef, its data and all model numbers are synthetic and illustrative. Real-world facts are quoted from the references above.</p>
+  </div>
+</footer>
+
+<script src="data/reef_data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js" integrity="sha384-cCVCZkAjYNxaYKbM8lsArLznDF/SvMFr1jcZrvOpSTCa0W40ZAdLzHCEulnUa5i7" crossorigin="anonymous"></script>
+<script>
+(() => {
+  "use strict";
+  const D = window.REEF_DATA || null;
+  const root = document.documentElement;
+  const css = (name) => getComputedStyle(root).getPropertyValue(name).trim();
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ================= Read-as switch ================= */
+  const MODES = ["everyone", "scientist", "policy"];
+  function setMode(mode, remember) {
+    if (!MODES.includes(mode)) mode = "everyone";
+    document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+    document.querySelectorAll("[data-aud]").forEach(el => { el.hidden = !el.dataset.aud.split(" ").includes(mode); });
+    document.querySelectorAll(".msg").forEach(el => el.classList.toggle("current", el.dataset.for === mode));
+    if (remember) { try { localStorage.setItem("reef-read-as", mode); } catch (e) {} }
+  }
+  document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode, true)));
+  let startMode = "everyone";
+  const hash = location.hash.replace("#", "");
+  if (MODES.includes(hash)) startMode = hash;
+  else { try { startMode = localStorage.getItem("reef-read-as") || "everyone"; } catch (e) {} }
+  setMode(startMode, false);
+
+  /* ================= Canvas helpers ================= */
+  function fitCanvas(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    if (!canvas.dataset.h) canvas.dataset.h = canvas.getAttribute("height");
+    const w = canvas.clientWidth, h = +canvas.dataset.h;
+    canvas.style.height = h + "px";
+    const tw = Math.round(w * dpr), th = Math.round(h * dpr);
+    if (canvas.width !== tw || canvas.height !== th) { canvas.width = tw; canvas.height = th; }
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w, h };
+  }
+
+  /* ================= Hero landscape (illustration) ================= */
+  const land = { z: 1.0, canvas: document.getElementById("landscape") };
+  const fishSlider = document.getElementById("land-fish");
+  const fishOut = document.getElementById("land-fish-out");
+  const landStatus = document.getElementById("land-status");
+  const tilt = () => (fishSlider.value - 50) / 50 * 0.65;     // >0 favours coral (right)
+  const V = (z, h) => z ** 4 / 4 - z * z / 2 - h * z;
+  const dV = (z, h) => z ** 3 - z - h;
+  function valleys(h) {
+    const v = [];
+    for (let z = -1.95; z <= 1.95; z += 0.01) if (dV(z, h) < 0 && dV(z + 0.01, h) >= 0) v.push(z);
+    return v;
+  }
+  function landLabel() {
+    const s = +fishSlider.value;
+    fishOut.textContent = s > 75 ? "plenty" : s > 50 ? "fewer" : s > 25 ? "few" : "very few";
+    const v = valleys(tilt());
+    const coral = v.some(z => z > 0), weed = v.some(z => z < 0);
+    const where = land.z > 0 ? "The reef is a coral reef." : "The reef is a seaweed reef.";
+    const scene = coral && weed ? "Two possible homes: coral or seaweed." : coral ? "Only a coral home exists." : "Only a seaweed home exists.";
+    landStatus.innerHTML = `<span class="pill ${coral && weed ? "edge" : coral ? "good" : "bad"}">${scene}</span> <span>${where}</span>`;
+  }
+  function drawLand() {
+    const { ctx, w, h } = fitCanvas(land.canvas);
+    const hT = tilt();
+    const zMin = -1.9, zMax = 1.9, vMin = -1.05, vMax = 1.7;
+    const X = z => 10 + (z - zMin) / (zMax - zMin) * (w - 20);
+    const Y = v => 18 + (vMax - Math.min(v, vMax)) / (vMax - vMin) * (h - 44);
+    // water tint
+    ctx.clearRect(0, 0, w, h);
+    ctx.beginPath();
+    for (let z = zMin; z <= zMax; z += 0.02) { const x = X(z), y = Y(V(z, hT)); z === zMin ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+    ctx.lineTo(X(zMax), h - 22); ctx.lineTo(X(zMin), h - 22); ctx.closePath();
+    ctx.fillStyle = css("--sunk"); ctx.fill();
+    ctx.beginPath();
+    for (let z = zMin; z <= zMax; z += 0.02) { const x = X(z), y = Y(V(z, hT)); z === zMin ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+    ctx.strokeStyle = css("--ink"); ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.font = "700 13px " + css("--font-display");
+    ctx.fillStyle = css("--weed"); ctx.textAlign = "left"; ctx.fillText("← Seaweed reef", 12, h - 6);
+    ctx.fillStyle = css("--coral"); ctx.textAlign = "right"; ctx.fillText("Coral reef →", w - 12, h - 6);
+    // ball
+    const bx = X(land.z), by = Y(V(land.z, hT)) - 11;
+    ctx.beginPath(); ctx.arc(bx, by, 10, 0, Math.PI * 2);
+    ctx.fillStyle = land.z > 0 ? css("--coral") : css("--weed"); ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = css("--surface"); ctx.stroke();
+  }
+  function stepLand() {
+    const hT = tilt();
+    for (let i = 0; i < 4; i++) land.z += -dV(land.z, hT) * 0.012;
+    land.z = Math.max(-1.85, Math.min(1.85, land.z));
+  }
+  fishSlider.addEventListener("input", landLabel);
+  document.getElementById("land-push").addEventListener("click", () => { land.z = Math.max(-1.85, land.z - 1.25); landLabel(); });
+  document.getElementById("land-reset").addEventListener("click", () => { land.z = 1.2; landLabel(); });
+
+  /* ================= The real model ================= */
+  const BASE = D ? D.baseline : { r_C: .2, r_rec: .05, mu_C: .05, a_CM: .35, r_M: .45, beta_N: .2, mu_M: .12,
+    G_max: .4, K_G: .3, r_H: .15, K_H: 1, q_M: .1, mu_H: .08, F_H: 0, N: .5 };
+  function rhs(x, p) {
+    const [C, M, H] = x, B = 1 - C - M;
+    const graze = p.G_max * H * M / (p.K_G + M);
+    return [
+      p.r_C * C * B + p.r_rec * B - p.a_CM * M * C - p.mu_C * C,
+      (p.r_M + p.beta_N * p.N) * M * B + p.a_CM * M * C - graze - p.mu_M * M,
+      p.r_H * H * (1 - H / p.K_H) + p.q_M * M * H - p.mu_H * H - p.F_H * H,
+    ];
+  }
+  function feasible(x) {
+    let [C, M, H] = x.map(v => Math.max(0, v));
+    if (C + M > 1) { const s = C + M; C /= s; M /= s; }
+    return [C, M, H];
+  }
+  function rk4(x, p, dt) {
+    const add = (a, b, k) => a.map((v, i) => v + k * b[i]);
+    const k1 = rhs(x, p), k2 = rhs(add(x, k1, dt / 2), p), k3 = rhs(add(x, k2, dt / 2), p), k4 = rhs(add(x, k3, dt), p);
+    return feasible(x.map((v, i) => v + dt / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i])));
+  }
+  function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function coralHome(p) {
+    const a = -p.r_C, b = p.r_C - p.r_rec - p.mu_C, c = p.r_rec;
+    const C = (-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+    const H = Math.max(0, p.K_H * (1 - (p.mu_H + p.F_H) / p.r_H));
+    return [C, 0, H];
+  }
+  function tippingGrazing(p) {
+    const [C, , H] = coralHome(p);
+    if (H <= 1e-3) return Infinity;
+    const push = (p.r_M + p.beta_N * p.N) * (1 - C) + p.a_CM * C - p.mu_M;
+    return Math.max(0, p.K_G * push / H);
+  }
+
+  /* ================= Simulator ================= */
+  const sim = { p: { ...BASE }, x: coralHome(BASE), t: 0, hist: [], events: [], running: !reduceMotion, acc: 0 };
+  const el = id => document.getElementById(id);
+  const DT = 0.05, WINDOW = 100, SAMPLE = 0.25, YEARS_PER_SEC = 4;
+  function record() { sim.hist.push({ t: sim.t, x: sim.x.slice() }); while (sim.hist.length && sim.hist[0].t < sim.t - WINDOW) sim.hist.shift(); }
+  function advance(years) {
+    const steps = Math.round(years / DT);
+    for (let i = 0; i < steps; i++) {
+      sim.x = rk4(sim.x, sim.p, DT);
+      if (el("sim-noise").checked) sim.x = feasible(sim.x.map(v => v + 0.01 * Math.sqrt(DT) * gauss()));
+      sim.t += DT;
+      if (Math.abs(sim.t / SAMPLE - Math.round(sim.t / SAMPLE)) < 1e-6) record();
+    }
+  }
+  function resetSim() {
+    sim.p = { ...BASE, F_H: +el("sim-fishing").value, N: +el("sim-nutrients").value, G_max: +el("sim-grazing").value };
+    sim.x = coralHome({ ...BASE }); sim.t = 0; sim.hist = []; sim.events = [];
+    record();
+    advance(WINDOW);         // pre-run so the chart is full at rest
+  }
+  function event(label, fn) { sim.x = feasible(fn(sim.x)); sim.events.push({ t: sim.t, label }); record(); updateReadouts(); drawSim(); }
+  el("ev-storm").addEventListener("click", () => event("Storm", ([C, M, H]) => [C * 0.4, M + 0.05, H * 0.7]));
+  el("ev-heat").addEventListener("click", () => event("Heatwave", ([C, M, H]) => [C * 0.6, M + 0.05, H * 0.9]));
+  el("ev-plant").addEventListener("click", () => event("Replant", ([C, M, H]) => [Math.min(C + 0.2, 1 - M), M, H]));
+  el("ev-weed").addEventListener("click", () => event("Weeding", ([C, M, H]) => [C, M * 0.3, H]));
+  el("sim-reset").addEventListener("click", () => { resetSim(); updateReadouts(); drawSim(); });
+  el("sim-play").addEventListener("click", () => { sim.running = !sim.running; el("sim-play").textContent = sim.running ? "Pause" : "Play"; });
+  el("sim-play").textContent = sim.running ? "Pause" : "Play";
+  function describeFishing(v) { return v === 0 ? "none" : v < 0.025 ? `light (${v.toFixed(3)})` : v < 0.045 ? `medium (${v.toFixed(3)})` : `heavy (${v.toFixed(3)})`; }
+  function describeNutrients(v) { return v <= 0.6 ? "clean (0.5)" : v < 1.2 ? `moderate (${v.toFixed(1)})` : `polluted (${v.toFixed(1)})`; }
+  function syncParams() {
+    sim.p.F_H = +el("sim-fishing").value; sim.p.N = +el("sim-nutrients").value; sim.p.G_max = +el("sim-grazing").value;
+    el("sim-fishing-out").textContent = describeFishing(sim.p.F_H);
+    el("sim-nutrients-out").textContent = describeNutrients(sim.p.N);
+    el("sim-grazing-out").textContent = sim.p.G_max.toFixed(2);
+    updateReadouts();
+  }
+  ["sim-fishing", "sim-nutrients", "sim-grazing"].forEach(id => el(id).addEventListener("input", syncParams));
+  function updateReadouts() {
+    const [C, M, H] = sim.x;
+    el("ro-c").textContent = Math.round(C * 100) + "%";
+    el("ro-m").textContent = Math.round(M * 100) + "%";
+    el("ro-h").textContent = H.toFixed(2);
+    const g = tippingGrazing(sim.p), margin = sim.p.G_max - g;
+    let pill, text;
+    if (!isFinite(g)) { pill = `<span class="pill bad">No coral valley</span>`; text = "Fishing is so heavy that the fish population cannot survive, so nothing keeps seaweed in check."; }
+    else if (margin > 0.01) { pill = `<span class="pill good">Coral valley exists</span>`; text = `Safety margin ${margin.toFixed(2)}: grazing is above the tipping point (${g.toFixed(3)}). A clean reef recovers from small knocks.`; }
+    else if (margin > -0.01) { pill = `<span class="pill edge">Knife-edge</span>`; text = `Grazing is right at the tipping point (${g.toFixed(3)}). Any extra pressure could tip the reef.`; }
+    else { pill = `<span class="pill bad">No coral valley</span>`; text = `Grazing is below the tipping point (${g.toFixed(3)}). Seaweed can invade even a healthy reef, so it drifts towards seaweed.`; }
+    el("sim-status").innerHTML = pill;
+    el("sim-explain").textContent = text;
+  }
+  function drawSim() {
+    const canvas = el("simchart");
+    const { ctx, w, h } = fitCanvas(canvas);
+    const L = 38, R = 8, T = 10, B = 26;
+    const t1 = sim.t, t0 = t1 - WINDOW;
+    const X = t => L + (t - t0) / WINDOW * (w - L - R);
+    const yMax = 1.2;
+    const Y = v => T + (1 - Math.min(v, yMax) / yMax) * (h - T - B);
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = "12px " + css("--font-display"); ctx.fillStyle = css("--muted");
+    ctx.strokeStyle = css("--line"); ctx.lineWidth = 1;
+    for (let v = 0; v <= 1.2001; v += 0.2) {
+      ctx.beginPath(); ctx.setLineDash([2, 4]); ctx.moveTo(L, Y(v)); ctx.lineTo(w - R, Y(v)); ctx.stroke();
+      ctx.textAlign = "right"; ctx.fillText(v.toFixed(1), L - 6, Y(v) + 4);
+    }
+    ctx.setLineDash([]);
+    const first = Math.ceil(t0 / 20) * 20;
+    ctx.textAlign = "center";
+    for (let t = first; t <= t1; t += 20) ctx.fillText(`${Math.round(t)} yr`, X(t), h - 6);
+    sim.events.forEach(e => {
+      if (e.t < t0) return;
+      ctx.strokeStyle = css("--muted"); ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(X(e.t), T); ctx.lineTo(X(e.t), h - B); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = css("--ink"); ctx.textAlign = "left"; ctx.fillText(e.label, Math.min(X(e.t) + 4, w - 60), T + 12);
+    });
+    [["--coral", 0, 2.6], ["--weed", 1, 2.6], ["--fish", 2, 2]].forEach(([tok, j, lw]) => {
+      ctx.beginPath(); ctx.strokeStyle = css(tok); ctx.lineWidth = lw;
+      sim.hist.forEach((s, i) => { const x = X(s.t), y = Y(s.x[j]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      ctx.stroke();
+    });
+  }
+
+  /* ================= SVG charts ================= */
+  const NS = "http://www.w3.org/2000/svg";
+  function svgEl(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function axes(svg, W, H, m, xs, ys, xlab, ylab, xTicks, yTicks, fmtX) {
+    yTicks.forEach(v => { svgEl("line", { x1: m.l, x2: W - m.r, y1: ys(v), y2: ys(v), class: "gridline" }, svg); const t = svgEl("text", { x: m.l - 8, y: ys(v) + 4, "text-anchor": "end" }, svg); t.textContent = v; });
+    xTicks.forEach(v => { const t = svgEl("text", { x: xs(v), y: H - m.b + 18, "text-anchor": "middle" }, svg); t.textContent = fmtX ? fmtX(v) : v; });
+    svgEl("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, class: "axis" }, svg);
+    const xl = svgEl("text", { x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle" }, svg); xl.textContent = xlab;
+    const yl = svgEl("text", { x: 14, y: (m.t + H - m.b) / 2, "text-anchor": "middle", transform: `rotate(-90 14 ${(m.t + H - m.b) / 2})` }, svg); yl.textContent = ylab;
+  }
+  function sweepChart() {
+    const box = document.getElementById("sweepchart");
+    if (!D) { box.textContent = "Chart data could not be loaded."; return; }
+    const W = 640, H = 380, m = { l: 56, r: 16, t: 16, b: 52 };
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Final coral cover against grazing strength, from a coral start and from a seaweed start" }, box);
+    const xs = g => m.l + g / 0.5 * (W - m.l - m.r), ys = c => m.t + (1 - c) * (H - m.t - m.b);
+    svgEl("rect", { x: xs(0.1775), y: m.t, width: xs(0.1975) - xs(0.1775), height: H - m.t - m.b, style: "fill: var(--warn); opacity: .16" }, svg);
+    axes(svg, W, H, m, xs, ys, "Grazing strength (model units)", "Coral cover where the reef settles", [0, 0.1, 0.2, 0.3, 0.4, 0.5], [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
+    svgEl("line", { x1: xs(0.4), x2: xs(0.4), y1: m.t, y2: H - m.b, style: "stroke: var(--muted); stroke-dasharray: 5 5" }, svg);
+    const bl = svgEl("text", { x: xs(0.4) + 6, y: ys(0.12) }, svg); bl.textContent = "healthy baseline";
+    const S = D.sweep;
+    S.grazing.forEach((g, i) => {
+      svgEl("circle", { cx: xs(g), cy: ys(S.coral_start[i]), r: 3.4, style: "fill: var(--coral)" }, svg);
+      const x = xs(g), y = ys(S.seaweed_start[i]), d = 3.2;
+      svgEl("path", { d: `M${x - d},${y - d}L${x + d},${y + d}M${x - d},${y + d}L${x + d},${y - d}`, style: "stroke: var(--weed); stroke-width: 1.6; fill: none" }, svg);
+    });
+    const lab = svgEl("text", { x: xs(0.19), y: m.t + 14, "text-anchor": "middle", style: "fill: var(--warn); font-weight: 700" }, svg); lab.textContent = "two outcomes";
+  }
+  const PLAN_STYLE = {
+    "Do nothing": "var(--muted)", "Replant coral": "var(--warn)", "Remove seaweed": "var(--weed)",
+    "Cut pollution": "var(--fish)", "Protect fish": "var(--accent)", "Everything together": "var(--ok)",
+  };
+  function rescueChart() {
+    const box = document.getElementById("rescuechart");
+    if (!D) { box.textContent = "Chart data could not be loaded."; return; }
+    const W = 640, H = 360, m = { l: 56, r: 16, t: 14, b: 52 };
+    const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Coral cover at Site D over 150 years under six rescue plans" }, box);
+    const xs = t => m.l + t / 150 * (W - m.l - m.r), ys = c => m.t + (1 - c) * (H - m.t - m.b);
+    axes(svg, W, H, m, xs, ys, "Years after the rescue starts", "Coral cover", [0, 30, 60, 90, 120, 150], [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
+    svgEl("line", { x1: m.l, x2: W - m.r, y1: ys(0.5), y2: ys(0.5), style: "stroke: var(--ink); stroke-dasharray: 2 3; opacity: .5" }, svg);
+    const yrs = D.rescue.years, legend = document.getElementById("rescuelegend");
+    Object.entries(D.rescue.plans).forEach(([name, plan]) => {
+      const d = plan.coral.map((c, i) => `${i ? "L" : "M"}${xs(yrs[i]).toFixed(1)},${ys(c).toFixed(1)}`).join("");
+      const dashed = name === "Replant coral" || name === "Remove seaweed";
+      svgEl("path", { d, style: `fill: none; stroke: ${PLAN_STYLE[name]}; stroke-width: 2.6; ${dashed ? "stroke-dasharray: 7 4;" : ""}` }, svg);
+      const item = document.createElement("span");
+      item.innerHTML = `<i style="background:${PLAN_STYLE[name]}"></i>${name}`;
+      legend.appendChild(item);
+    });
+  }
+
+  /* ================= 3D tolerance wall ================= */
+  function wall3d() {
+    const box = document.getElementById("wall3d");
+    if (!window.Plotly || !D) {
+      box.innerHTML = '<img src="figures/step05_basins_3d.png" alt="3D tolerance wall: the most seaweed a reef can have and still recover, by coral and fish level">';
+      box.style.minHeight = "0";
+      return;
+    }
+    const W = D.wall;
+    const font = { family: css("--font-display"), color: css("--ink"), size: 12 };
+    const axis = t => ({ title: { text: t }, gridcolor: css("--line"), zerolinecolor: css("--line"), backgroundcolor: "rgba(0,0,0,0)", color: css("--muted") });
+    Plotly.react(box, [{
+      type: "surface", x: W.coral, y: W.herbivores, z: W.max_seaweed,
+      colorscale: [[0, css("--coral")], [0.45, "#E9C46A"], [1, css("--accent")]],
+      colorbar: { title: { text: "max seaweed" }, thickness: 12, len: 0.6, tickfont: font },
+      hovertemplate: "coral %{x:.0%}<br>fish %{y:.1f}<br>max seaweed %{z:.0%}<extra></extra>",
+    }], {
+      paper_bgcolor: "rgba(0,0,0,0)", font, margin: { l: 0, r: 0, t: 10, b: 0 }, height: 440,
+      scene: { xaxis: axis("Coral cover"), yaxis: axis("Fish (herbivores)"), zaxis: axis("Max seaweed for recovery"),
+               camera: { eye: { x: -1.5, y: -1.6, z: 0.9 } } },
+    }, { responsive: true, displaylogo: false, modeBarButtonsToRemove: ["toImage"] });
+  }
+
+  /* ================= Boot + animation ================= */
+  resetSim(); syncParams(); landLabel(); sweepChart(); rescueChart(); wall3d();
+  drawLand(); drawSim();
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    stepLand(); drawLand();
+    if (sim.running) {
+      sim.acc += dt * YEARS_PER_SEC;
+      if (sim.acc >= SAMPLE) { const yrs = Math.floor(sim.acc / SAMPLE) * SAMPLE; advance(yrs); sim.acc -= yrs; updateReadouts(); drawSim(); }
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  window.addEventListener("resize", () => { drawLand(); drawSim(); });
+  const rethemed = () => { drawLand(); drawSim(); wall3d(); };
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", rethemed);
+  new MutationObserver(rethemed).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+})();
+</script>

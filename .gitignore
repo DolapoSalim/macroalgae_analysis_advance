@@ -1,10 +1,14 @@
-# Keep all Markdown documents local (planning notes, guides, overviews)
+# Keep all Markdown documents local (planning notes, guides, overviews, reports)
 *.md
+# ...except the repository README
+!/README.md
 
-# Keep the written reports local too (Word versions and the reports folder)
+# Keep the written reports and Word documents local (personal tools)
 *.docx
 ~$*.docx
-reports/
+reports/*
+# ...but publish the run logs that back every reported number
+!reports/logs/
 
 # Python
 __pycache__/
