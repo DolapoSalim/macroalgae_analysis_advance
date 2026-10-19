@@ -84,8 +84,10 @@ def first_guess_starts(segments):
     """Start state of each segment = average of its first few recorded values
     (for each variable, the first 3 values that were actually recorded)."""
     z = []
+    fallback = (0.5, 0.1, 0.5)   # used only if a variable was never recorded in a segment
     for seg in segments:
-        C, M, H = (np.mean(col[~np.isnan(col)][:3]) for col in seg["obs"].T)
+        firsts = [col[~np.isnan(col)][:3] for col in seg["obs"].T]
+        C, M, H = (vals.mean() if vals.size else fb for vals, fb in zip(firsts, fallback))
         z += [C, M, np.log(H)]
     return np.array(z)
 

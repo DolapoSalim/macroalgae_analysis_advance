@@ -12,6 +12,7 @@ from pathlib import Path
 
 from docx import Document
 from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.text import WD_COLOR_INDEX
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Pt, RGBColor
@@ -20,7 +21,7 @@ REPORTS = Path("reports")
 DOCS = {
     # markdown file: (output, body font, heading colour, add table of contents?)
     "methodology_journal.md": ("methodology_journal.docx", "Cambria", RGBColor(0x1F, 0x3A, 0x5F), False),
-    "learning_report.md": ("learning_report.docx", "Calibri", RGBColor(0x0B, 0x6E, 0x6E), True),
+    "learning_report.md": ("learning_report.docx", "Calibri", RGBColor(0x0B, 0x6E, 0x6E), False),
 }
 
 
@@ -85,6 +86,19 @@ def style_tables(path, header_fill):
     doc.save(path)
 
 
+def highlight_review_notes(path):
+    """Highlight every '[REVIEW]' paragraph in yellow so it stands out in Word."""
+    doc = Document(path)
+    count = 0
+    for par in doc.paragraphs:
+        if par.text.lstrip().startswith("[REVIEW]"):
+            for run in par.runs:
+                run.font.highlight_color = WD_COLOR_INDEX.YELLOW
+            count += 1
+    doc.save(path)
+    return count
+
+
 def main():
     for md, (out, font, colour, toc) in DOCS.items():
         ref = REPORTS / f"_reference_{out}"
@@ -97,8 +111,9 @@ def main():
             cmd += ["--toc", "--toc-depth=1"]
         subprocess.run(cmd, check=True)
         style_tables(REPORTS / out, "DCE6F0" if "journal" in out else "D9EFEF")
+        n_review = highlight_review_notes(REPORTS / out)
         ref.unlink()
-        print(f"wrote {REPORTS / out}")
+        print(f"wrote {REPORTS / out} ({n_review} review notes highlighted)")
 
 
 if __name__ == "__main__":

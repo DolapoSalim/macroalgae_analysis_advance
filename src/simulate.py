@@ -12,7 +12,7 @@ def simulate(x0, p, years=100, points_per_year=10):
     Returns (t, X): t is an array of times, X has one row per time and
     columns C, M, H.
     """
-    t_eval = np.linspace(0, years, years * points_per_year + 1)
+    t_eval = np.linspace(0, years, int(round(years * points_per_year)) + 1)
     sol = solve_ivp(rhs, (0, years), x0, args=(p,), t_eval=t_eval,
                     method="RK45", rtol=1e-8, atol=1e-10)
     if not sol.success:

@@ -31,7 +31,7 @@ site,year,coral,seaweed,herbivores
 "A Protected, clean water",7.22578,0.72854,0.00473,0.56199
 "A Protected, clean water",7.49349,0.73964,0.00802,0.55795
 "A Protected, clean water",7.78131,0.73527,0.01604,0.55656
-"A Protected, clean water",8.01987,0.56221,0.03783,0.48459
+"A Protected, clean water",8.01987,0.29499,0.06795,0.38517
 "A Protected, clean water",8.21115,0.29936,0.06907,0.38897
 "A Protected, clean water",8.49161,0.30666,0.05890,0.40286
 "A Protected, clean water",8.72814,0.31514,0.04791,0.40620
@@ -193,7 +193,7 @@ C Lightly fished,7.02507,0.66080,0.03281,0.32288
 C Lightly fished,7.27454,0.65765,0.03375,0.32861
 C Lightly fished,7.48850,0.66062,0.03142,0.32361
 C Lightly fished,7.75388,0.66651,0.03345,0.32283
-C Lightly fished,8.01724,0.53713,0.05497,0.28356
+C Lightly fished,8.01724,0.27085,0.08773,0.22142
 C Lightly fished,8.25637,0.27737,0.09622,0.22446
 C Lightly fished,8.50354,0.28549,0.09530,0.23357
 C Lightly fished,8.72303,0.29676,0.09575,0.23003
@@ -274,7 +274,7 @@ D Fished and polluted,6.99344,0.57087,0.12669,0.28251
 D Fished and polluted,7.22109,0.57368,0.12088,0.28860
 D Fished and polluted,7.49912,0.56721,0.12508,0.28545
 D Fished and polluted,7.74670,0.56902,0.12481,0.28768
-D Fished and polluted,8.03722,0.31927,0.16517,0.22007
+D Fished and polluted,8.03722,0.23165,0.17795,0.19838
 D Fished and polluted,8.28305,0.23919,0.19425,0.19860
 D Fished and polluted,8.51807,0.24822,0.20735,0.20037
 D Fished and polluted,8.71581,0.25587,0.22087,0.20238
@@ -355,7 +355,7 @@ E Heavily fished,6.98624,0.62365,0.05376,0.29406
 E Heavily fished,7.21481,0.62621,0.05195,0.28601
 E Heavily fished,7.52074,0.63889,0.05286,0.28562
 E Heavily fished,7.72315,0.64567,0.05325,0.28650
-E Heavily fished,8.02045,0.49118,0.07101,0.24757
+E Heavily fished,8.02045,0.26052,0.10056,0.19724
 E Heavily fished,8.22501,0.26991,0.10596,0.19248
 E Heavily fished,8.46622,0.28608,0.11565,0.19660
 E Heavily fished,8.78014,0.30417,0.12709,0.20882

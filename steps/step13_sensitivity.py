@@ -5,7 +5,11 @@ value (like our Step 11 first guesses). We build ~30,000 versions of the reef
 and measure two resilience outcomes for each:
 
   1. TIPPING POINT: the grazing level below which seaweed can invade a clean reef
-  2. STORM TEST: coral cover 50 years after a strong storm (fishing 0, nutrients 0.5)
+  2. STORM TEST: coral cover 50 years after a strong storm hits the reef's own clean
+     coral home (fishing 0, nutrients 0.5)
+
+Grazing strength G_max is itself one of the varied numbers, so each version is
+compared with its OWN grazing: safety margin = G_max - tipping point.
 
 Uncertainty: how spread out are the outcomes?
 Sensitivity: which numbers cause that spread? (Sobol indices)
@@ -65,13 +69,18 @@ def main():
     # ---------------- uncertainty (use the A block: an even spread of versions)
     tip = outputs["Tipping point (grazing)"][:N]
     storm = outputs["Coral 50 yrs after storm"][:N]
+    pA = to_params(A)
+    margin = pA["G_max"] - tip
+    valley = margin > 0
     print("\nUNCERTAINTY (if every number could be off by up to 2x):")
     print(f"  tipping point: middle value {np.median(tip):.2f}, 90% of versions between "
           f"{np.percentile(tip, 5):.2f} and {np.percentile(tip, 95):.2f}  (baseline 0.17)")
-    print(f"  versions where today's grazing (0.40) is ALREADY below the tipping point: {np.mean(tip > 0.40):.0%}")
-    print(f"  versions where a strong storm leaves coral below 50% after 50 yrs: {np.mean(storm < 0.5):.0%}")
-    fish_die = np.mean(to_params(A)["mu_H"] >= to_params(A)["r_H"])
-    print(f"  versions where fish death >= fish birth (fish can't survive at all): {fish_die:.0%}")
+    print(f"  versions with NO coral valley (own grazing below own tipping point): {np.mean(~valley):.0%}")
+    print(f"  versions where fish death >= fish birth (fish can't survive at all): "
+          f"{np.mean(pA['mu_H'] >= pA['r_H']):.0%}")
+    print(f"  strong storm on the clean coral home -> coral below 50% after 50 yrs:")
+    print(f"      all versions {np.mean(storm < 0.5):.0%};  versions WITH a coral valley "
+          f"{np.mean(storm[valley] < 0.5):.0%};  versions WITHOUT {np.mean(storm[~valley] < 0.5):.0%}")
 
     # What do the Step 11 fits (which disagreed on every fish number) say?
     saved = json.loads(Path("data/fits/step11_fits.json").read_text())
@@ -83,16 +92,18 @@ def main():
     print(f"  truth: tipping point {tipping_grazing(make_parameters()):.3f}")
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
-    axes[0].hist(tip, bins=50, color="#9467bd", alpha=0.8)
-    axes[0].axvline(0.172, color="black", ls="--", label="baseline estimate (0.17)")
-    axes[0].axvline(0.40, color="#d62728", lw=2, label="today's grazing (0.40)")
-    axes[0].set_xlabel("Tipping point (grazing level)")
+    axes[0].hist(np.clip(margin, -0.6, 0.8), bins=50, color="#9467bd", alpha=0.8)
+    axes[0].axvline(0.40 - 0.172, color="black", ls="--", label="baseline (+0.23)")
+    axes[0].axvline(0, color="#d62728", lw=2, label="0 = no safety margin left")
+    axes[0].set_xlabel("Safety margin = own grazing - tipping point")
     axes[0].set_ylabel("number of reef versions")
-    axes[0].set_title("Where is the tipping point?")
+    axes[0].set_title("Is there a coral valley?")
     axes[0].legend(fontsize=8)
-    axes[1].hist(storm, bins=50, color="#1f77b4", alpha=0.8)
-    axes[1].axvline(0.5, color="#d62728", lw=2, label="50% coral")
-    axes[1].set_xlabel("Coral cover 50 years after a strong storm")
+    bins = np.linspace(0, 1, 51)
+    axes[1].hist(storm[valley], bins=bins, color="#1f77b4", alpha=0.8, label="with a coral valley")
+    axes[1].hist(storm[~valley], bins=bins, color="#d62728", alpha=0.6, label="without a coral valley")
+    axes[1].axvline(0.5, color="black", ls="--", lw=1)
+    axes[1].set_xlabel("Coral cover 50 years after a strong storm (from the clean coral home)")
     axes[1].set_title("Does the reef recover from a strong storm?")
     axes[1].legend(fontsize=8)
     for ax in axes:

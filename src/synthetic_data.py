@@ -21,8 +21,12 @@ def simulate_truth(x0, p, years, storm_year, sigma, rng, dt=0.05):
     t1, path1 = simulate_noisy(x0, p, storm_year, sigma, 1, rng, dt=dt, record_every=dt)
     x_storm = apply_shock(path1[-1, :, 0], "Strong storm")
     t2, path2 = simulate_noisy(x_storm, p, years - storm_year, sigma, 1, rng, dt=dt, record_every=dt)
-    t = np.concatenate([t1, storm_year + t2[1:]])
-    X = np.vstack([path1[:, :, 0], path2[1:, :, 0]])
+    # Keep both the pre-storm state (at storm_year) and the post-storm state (a hair
+    # later), so a survey just after the storm sees the damaged reef, not a blend.
+    t_after = storm_year + t2
+    t_after[0] += 1e-9
+    t = np.concatenate([t1, t_after])
+    X = np.vstack([path1[:, :, 0], path2[:, :, 0]])
     return t, X
 
 

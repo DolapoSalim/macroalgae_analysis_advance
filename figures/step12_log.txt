@@ -1,6 +1,6 @@
 C:\Users\dolap\OneDrive\Documents\DOLAPO\data-analysis\macroalgae_analysis_advance\steps\step12_identifiability.py:184: UserWarning: Tight layout not applied. tight_layout cannot make Axes width small enough to accommodate all Axes decorations
   fig.tight_layout()
-Best misfit 1292.2. A number is 'pinned down' where moving it raises the misfit by more than 5.3.
+Best misfit 1139.5. A number is 'pinned down' where moving it raises the misfit by more than 4.7.
 
   profiled r_C
   profiled r_rec
@@ -17,35 +17,35 @@ Best misfit 1292.2. A number is 'pinned down' where moving it raises the misfit 
   profiled mu_H
 
 number      TRUE   fitted   95% plausible range      verdict          truth inside?
-r_C        0.200    0.158   0.079 to 0.238           PINNED DOWN      yes
-r_rec      0.050    0.054   0.041 to 0.067           PINNED DOWN      yes
-mu_C       0.050    0.041   0.016 to 0.066           PINNED DOWN      yes
-a_CM       0.350    0.366   0.318 to 0.407           PINNED DOWN      yes
-r_M        0.450    0.493   0.301 to 0.708           PINNED DOWN      yes
-beta_N     0.200    0.285   0.209 to 0.367           PINNED DOWN      NO
-mu_M       0.120    0.153   0.080 to 0.234           PINNED DOWN      yes
-G_max      0.400    0.445   0.312 to 0.665           PINNED DOWN      yes
-K_G        0.300    0.282   0.184 to 0.431           PINNED DOWN      yes
-r_H        0.150    0.193   0.073 to >0.58           ONE-SIDED        yes
-K_H        1.000    0.910   0.426 to >2.73           ONE-SIDED        yes
-q_M        0.100    0.067   0.000 to 0.119           ONE-SIDED        yes
-mu_H       0.080    0.090   anything in 1/3x-3x      NOT PINNED DOWN  yes
+r_C        0.200    0.203   0.126 to 0.276           PINNED DOWN      yes
+r_rec      0.050    0.054   0.041 to 0.066           PINNED DOWN      yes
+mu_C       0.050    0.056   0.031 to 0.083           PINNED DOWN      yes
+a_CM       0.350    0.369   0.324 to 0.407           PINNED DOWN      yes
+r_M        0.450    0.493   0.314 to 0.686           PINNED DOWN      yes
+beta_N     0.200    0.288   0.217 to 0.365           PINNED DOWN      NO
+mu_M       0.120    0.156   0.086 to 0.234           PINNED DOWN      yes
+G_max      0.400    0.440   0.318 to 0.634           PINNED DOWN      yes
+K_G        0.300    0.278   0.185 to 0.416           PINNED DOWN      yes
+r_H        0.150    0.201   0.079 to >0.60           ONE-SIDED        yes
+K_H        1.000    0.934   0.441 to >2.80           ONE-SIDED        yes
+q_M        0.100    0.063   0.000 to 0.112           ONE-SIDED        yes
+mu_H       0.080    0.095   anything in 1/3x-3x      NOT PINNED DOWN  yes
 
 Fisher information: directions in 'number space', from sloppiest to stiffest
 (std. error = how uncertain that combination is, on a log scale; >1 means 'unknown')
    1. std. error      inf   mainly: +0.83*log(mu_H) +0.39*log(r_H) +0.39*log(K_H)
-   2. std. error    0.446   mainly: +0.55*log(mu_C) -0.55*log(q_M) +0.46*log(r_C)
-   3. std. error    0.426   mainly: -0.76*log(q_M) -0.48*log(mu_C) -0.38*log(r_C)
-   4. std. error    0.304   mainly: -0.64*log(mu_M) -0.59*log(r_M) -0.30*log(G_max)
-   5. std. error    0.267   mainly: +0.60*log(K_G) +0.49*log(G_max) -0.41*log(mu_M)
-   6. std. error    0.147   mainly: +0.81*log(beta_N) -0.50*log(r_M) +0.19*log(r_rec)
-   7. std. error    0.124   mainly: +0.61*log(K_H) -0.52*log(r_rec) -0.45*log(r_H)
-   8. std. error    0.107   mainly: +0.59*log(r_rec) +0.46*log(K_H) -0.38*log(r_H)
-   9. std. error    0.068   mainly: -0.49*log(K_G) -0.44*log(a_CM) -0.41*log(mu_M)
-  10. std. error    0.053   mainly: +0.67*log(a_CM) +0.39*log(G_max) -0.36*log(K_G)
-  11. std. error    0.028   mainly: -0.66*log(r_H) +0.52*log(mu_H) -0.46*log(K_H)
-  12. std. error    0.021   mainly: -0.60*log(r_C) -0.50*log(r_rec) +0.39*log(mu_C)
-  13. std. error    0.013   mainly: -0.58*log(G_max) +0.43*log(r_M) +0.36*log(a_CM)
+   2. std. error    0.433   mainly: -0.94*log(q_M) +0.21*log(K_G) +0.18*log(G_max)
+   3. std. error    0.337   mainly: +0.61*log(mu_C) +0.54*log(r_C) +0.32*log(K_G)
+   4. std. error    0.281   mainly: +0.68*log(mu_M) +0.57*log(r_M) +0.24*log(beta_N)
+   5. std. error    0.244   mainly: +0.58*log(K_G) +0.48*log(G_max) -0.39*log(mu_C)
+   6. std. error    0.136   mainly: -0.81*log(beta_N) +0.51*log(r_M) -0.17*log(r_rec)
+   7. std. error    0.114   mainly: +0.65*log(K_H) -0.47*log(r_rec) -0.47*log(r_H)
+   8. std. error    0.097   mainly: +0.65*log(r_rec) +0.41*log(K_H) -0.33*log(r_H)
+   9. std. error    0.063   mainly: -0.50*log(K_G) -0.43*log(mu_M) -0.41*log(a_CM)
+  10. std. error    0.048   mainly: +0.71*log(a_CM) +0.38*log(G_max) -0.33*log(K_G)
+  11. std. error    0.025   mainly: -0.67*log(r_H) +0.53*log(mu_H) -0.44*log(K_H)
+  12. std. error    0.017   mainly: -0.65*log(r_C) +0.45*log(mu_C) -0.41*log(r_rec)
+  13. std. error    0.012   mainly: -0.56*log(G_max) +0.42*log(r_M) +0.37*log(a_CM)
 
 Computing 3D landscapes...
 

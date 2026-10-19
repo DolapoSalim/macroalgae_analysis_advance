@@ -6,7 +6,7 @@ can be an array (one value per parameter set).
 
 import numpy as np
 
-from src.disturbances import apply_shock
+from src.disturbances import SCENARIOS
 from src.stochastic import keep_feasible
 from src.model import rhs
 
@@ -36,15 +36,15 @@ def tipping_grazing(p, cap=1.0):
     return np.clip(g, 0, cap)
 
 
-def coral_after_storm(p, years_after=50, settle_years=300, dt=0.05):
-    """Coral cover `years_after` years after a strong storm, for a reef that had
-    first settled for `settle_years` (no shaking)."""
-    n = np.broadcast(*[np.asarray(v) for v in p.values()]).shape[0]
-    X = np.tile(np.array([[0.6], [0.1], [0.5]]), (1, n))
-    for _ in range(int(settle_years / dt)):
-        X = keep_feasible(X + rhs(0, X, p) * dt)
-    X = np.array([apply_shock(X[:, k], "Strong storm") for k in range(n)]).T
-    for _ in range(int(years_after / dt)):
+def coral_after_storm(p, years_after=50, dt=0.05):
+    """Coral cover `years_after` years after a strong storm hits the CLEAN CORAL HOME
+    (no shaking). Starting every reef version from its own coral home means the
+    storm, not an already-degraded starting state, is what is being tested."""
+    C, H = coral_home(p)
+    coral_loss, seaweed_arrival, herbivore_loss, _ = SCENARIOS["Strong storm"]
+    C = (1 - coral_loss) * C
+    X = np.vstack([C, np.minimum(seaweed_arrival, 1 - C), (1 - herbivore_loss) * H])
+    for _ in range(int(round(years_after / dt))):
         X = keep_feasible(X + rhs(0, X, p) * dt)
     return X[0]
 

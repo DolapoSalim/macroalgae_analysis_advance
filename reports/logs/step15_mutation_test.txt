@@ -1,0 +1,21 @@
+MUTATION TEST (run on a copy of the project)
+Planted bug in src/model.py (copy): grazing ADDS seaweed instead of removing it:
+64:          + r["algae_grazed"] - r["algae_loss"])
+
+E            +      where <ufunc 'absolute'> = np.abs
+
+tests\test_numerics.py:28: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_constraints.py::test_rules_point_inwards_at_every_edge - as...
+FAILED tests/test_constraints.py::test_simulations_stay_possible - assert np....
+FAILED tests/test_lyapunov.py::test_lyapunov_equation_is_solved - AssertionEr...
+FAILED tests/test_lyapunov.py::test_score_falls_inside_the_certified_zone - n...
+FAILED tests/test_lyapunov.py::test_reefs_in_the_certified_zone_recover - num...
+FAILED tests/test_model.py::test_rates_add_up - assert np.False_
+FAILED tests/test_model.py::test_tipping_formula_matches_stability_test - Ass...
+FAILED tests/test_model.py::test_bistability_window - assert 0 == 2
+FAILED tests/test_numerics.py::test_simple_stepping_matches_accurate_solver
+9 failed, 10 passed in 3.90s
+
+Original project unchanged:
+64:          - r["algae_grazed"] - r["algae_loss"])

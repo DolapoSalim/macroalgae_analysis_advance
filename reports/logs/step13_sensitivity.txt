@@ -2,30 +2,31 @@ Evaluating 30720 versions of the reef...
 
 UNCERTAINTY (if every number could be off by up to 2x):
   tipping point: middle value 0.22, 90% of versions between 0.04 and 1.00  (baseline 0.17)
-  versions where today's grazing (0.40) is ALREADY below the tipping point: 32%
-  versions where a strong storm leaves coral below 50% after 50 yrs: 35%
+  versions with NO coral valley (own grazing below own tipping point): 33%
   versions where fish death >= fish birth (fish can't survive at all): 15%
+  strong storm on the clean coral home -> coral below 50% after 50 yrs:
+      all versions 37%;  versions WITH a coral valley 8%;  versions WITHOUT 95%
 
 TIPPING POINT FROM THE STEP 11 FITS (fish numbers differ, but...):
-  fit 1: fish birth 0.188, death 0.086, max 0.888 -> fish at coral home 0.483, tipping point 0.153
-  fit 2: fish birth 0.183, death 0.081, max 0.864 -> fish at coral home 0.483, tipping point 0.153
-  fit 3: fish birth 0.193, death 0.090, max 0.910 -> fish at coral home 0.483, tipping point 0.153
+  fit 1: fish birth 0.191, death 0.085, max 0.887 -> fish at coral home 0.490, tipping point 0.153
+  fit 2: fish birth 0.186, death 0.081, max 0.865 -> fish at coral home 0.490, tipping point 0.153
+  fit 3: fish birth 0.201, death 0.095, max 0.934 -> fish at coral home 0.490, tipping point 0.153
   truth: tipping point 0.172
 
 SENSITIVITY (total Sobol index: share of the spread caused by each number):
 number     tipping point   storm test   trust (Step 12)
-r_H                 0.55         0.34   half known
-mu_H                0.54         0.41   unknown
-K_G                 0.07         0.13   pinned
-K_H                 0.07         0.22   half known
-a_CM                0.07         0.17   pinned
-mu_M                0.02         0.08   pinned
-r_M                 0.01         0.14   pinned
-mu_C                0.00         0.07   loose
-r_C                 0.00         0.06   loose
-beta_N              0.00         0.02   pinned
-r_rec               0.00         0.02   pinned
-G_max               0.00         0.19   pinned
-q_M                 0.00         0.06   half known
+r_H                 0.55         0.42   half known
+mu_H                0.54         0.47   unknown
+K_G                 0.07         0.10   pinned
+K_H                 0.07         0.19   half known
+a_CM                0.07         0.14   pinned
+mu_M                0.02         0.07   pinned
+r_M                 0.01         0.11   pinned
+mu_C                0.00         0.06   loose
+r_C                 0.00         0.05   loose
+beta_N              0.00         0.01   pinned
+r_rec               0.00         0.01   pinned
+G_max               0.00         0.15   pinned
+q_M                 0.00         0.03   half known
 
 Figures saved in figures/
