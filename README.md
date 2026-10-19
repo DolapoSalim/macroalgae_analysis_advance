@@ -39,3 +39,7 @@ Use the **"Cite this repository"** button on GitHub, or cite the archived releas
 Code: MIT. Website text and figures: CC BY 4.0.
 
 Author: Dolapo Olatoye
+
+---
+
+<sub><i>The research idea is the author's own. The analysis code was generated with Claude (Anthropic) and then reviewed, debugged and edited by the author, with a human in the loop throughout.</i></sub>
