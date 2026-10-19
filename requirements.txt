@@ -1,6 +1,9 @@
-numpy
-scipy
-matplotlib
-plotly
-pandas
-pytest
+# Exact versions used to produce the reported results (Python 3.13.3)
+numpy==2.2.6
+scipy==1.17.1
+matplotlib==3.10.3
+pandas==2.3.0
+plotly==7.1.0
+pytest==9.1.1
+# Only needed for tools/build_word_docs.py
+python-docx==1.2.0

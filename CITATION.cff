@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Coral reef tipping points: a synthetic coral–macroalgae–herbivore resilience model"
+abstract: >-
+  A coral–macroalgae–herbivore model built with synthetic data to test a
+  resilience-analysis workflow: bifurcation and basin analysis, stochastic
+  transitions, early-warning signals, Lyapunov estimates, parameter estimation,
+  identifiability, global sensitivity and management scenarios.
+authors:
+  - family-names: Olatoye
+    given-names: Dolapo
+version: 1.0.0
+date-released: 2026-10-19
+license: MIT
+repository-code: "https://github.com/DolapoSalim/macroalgae_analysis_advance"
+url: "https://dolaposalim.github.io/macroalgae_analysis_advance/"
+keywords:
+  - coral reef
+  - macroalgae
+  - resilience
+  - tipping point
+  - bistability
+  - early-warning signals
+  - identifiability
+  - sensitivity analysis

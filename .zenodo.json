@@ -1,0 +1,9 @@
+{
+  "title": "Coral reef tipping points: a synthetic coral–macroalgae–herbivore resilience model",
+  "description": "A coral–macroalgae–herbivore model built with synthetic data to test a resilience-analysis workflow: bifurcation and basin analysis, stochastic transitions, early-warning signals, Lyapunov estimates, parameter estimation, identifiability, global sensitivity and management scenarios. Interactive website: https://dolaposalim.github.io/macroalgae_analysis_advance/",
+  "creators": [{ "name": "Olatoye, Dolapo" }],
+  "license": "MIT",
+  "upload_type": "software",
+  "keywords": ["coral reef", "macroalgae", "resilience", "tipping point", "bistability",
+               "early-warning signals", "identifiability", "sensitivity analysis"]
+}

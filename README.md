@@ -4,6 +4,9 @@
 
 ### → [dolaposalim.github.io/macroalgae_analysis_advance](https://dolaposalim.github.io/macroalgae_analysis_advance/)
 
+[![Tests](https://github.com/DolapoSalim/macroalgae_analysis_advance/actions/workflows/tests.yml/badge.svg)](https://github.com/DolapoSalim/macroalgae_analysis_advance/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Run the reef model in your browser, see the tipping point, and read the findings for everyday readers, scientists and decision-makers.
 
 ---
@@ -27,5 +30,9 @@ pip install -r requirements.txt
 python -m pytest                          # checks (about 10 s)
 python -m steps.step03_grazing_sweep      # example: find the tipping point
 ```
+
+## Cite and license
+
+Use the **"Cite this repository"** button on GitHub (from `CITATION.cff`). Code: MIT. Website text and figures: CC BY 4.0.
 
 Author: Dolapo Olatoye
