@@ -11,6 +11,14 @@ authors:
     given-names: Dolapo
 version: 1.0.0
 date-released: 2026-10-19
+doi: 10.5281/zenodo.23471354
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23471354
+    description: "All versions (resolves to the latest release)"
+  - type: doi
+    value: 10.5281/zenodo.23471355
+    description: "Version 1.0.0"
 license: MIT
 repository-code: "https://github.com/DolapoSalim/macroalgae_analysis_advance"
 url: "https://dolaposalim.github.io/macroalgae_analysis_advance/"

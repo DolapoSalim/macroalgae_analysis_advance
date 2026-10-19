@@ -6,6 +6,7 @@
 
 [![Tests](https://github.com/DolapoSalim/macroalgae_analysis_advance/actions/workflows/tests.yml/badge.svg)](https://github.com/DolapoSalim/macroalgae_analysis_advance/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23471354.svg)](https://doi.org/10.5281/zenodo.23471354)
 
 Run the reef model in your browser, see the tipping point, and read the findings for everyday readers, scientists and decision-makers.
 
@@ -33,6 +34,8 @@ python -m steps.step03_grazing_sweep      # example: find the tipping point
 
 ## Cite and license
 
-Use the **"Cite this repository"** button on GitHub (from `CITATION.cff`). Code: MIT. Website text and figures: CC BY 4.0.
+Use the **"Cite this repository"** button on GitHub, or cite the archived release: Olatoye, D. (2026). *Coral reef tipping points: a synthetic coral–macroalgae–herbivore resilience model* (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.23471355
+
+Code: MIT. Website text and figures: CC BY 4.0.
 
 Author: Dolapo Olatoye
