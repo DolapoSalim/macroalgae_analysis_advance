@@ -6,7 +6,7 @@
 
 [![Tests](https://github.com/DolapoSalim/macroalgae_analysis_advance/actions/workflows/tests.yml/badge.svg)](https://github.com/DolapoSalim/macroalgae_analysis_advance/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23471354.svg)](https://doi.org/10.5281/zenodo.23471354)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.23471354-1682D4?logo=zenodo&logoColor=white)](https://doi.org/10.5281/zenodo.23471354)
 
 Run the reef model in your browser, see the tipping point, and read the findings for everyday readers, scientists and decision-makers.
 
